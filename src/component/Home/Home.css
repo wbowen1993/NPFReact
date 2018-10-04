@@ -1,0 +1,83 @@
+.homeWrapper{
+	background-image: url(zion_as_index.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
+	/*padding:calc(50vh - 30px) 50vw;*/
+
+	height:calc(100vh - 60px);
+	width: 100vw;
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.head{
+	margin-top: 5vh;
+}
+#box{
+	position: relative;
+	width: 10vw;
+	min-width: 100px;
+	padding: 20px;
+	text-align: center;
+	background:rgba(100, 100, 100, 0.3);
+	border:3px solid rgba(100, 100, 100, 0.3);
+	background-clip: padding-box;
+	margin-left: auto;
+	margin-right: auto;
+	transition: 0.4s all ease;
+}
+
+h1{
+	color: white;
+	text-align: center;
+	font-size: 4em;
+	font-family: 'Lobster', cursive;
+	letter-spacing: 2px;
+}
+#box::before{
+	z-index: -1;
+	opacity: 0;
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	background: white;
+	transition: all 0.4s ease;
+}
+
+#box:hover::before{
+	opacity: 1;
+	top: 5px;
+	left: 5px;
+	width: calc(100% - 10px);
+	height: calc(100% - 10px);
+}
+
+#box:hover{
+	background: transparent;
+	border:3px solid white;
+}
+
+.links{
+	color: white;
+	text-decoration: none;
+}
+#box:hover .links{
+	color: rgba(0,0,0,0.5);
+}
+
+.homeWrapper::after{
+	content: "";
+	z-index: -1;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	background: rgba(100,100,100,0.25);
+}

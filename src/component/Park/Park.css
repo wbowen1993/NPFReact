@@ -1,0 +1,37 @@
+.parkBoard{
+  /*position: relative;*/
+  background: linear-gradient(#0d3752 70px, #fff 0px);
+  margin-bottom: 30px;
+  margin: 20px;
+  border:1px solid #ccc;
+  width: 240px;
+  transition: 0.2s all;
+  border-radius: 10px;
+}
+
+.parkBoard:hover{
+  box-shadow: 0 5px 30px 1px #ddd;
+  transform: perspective(50em) rotateX(10deg);
+}
+
+.parkInfo{
+
+  padding:20px;
+}
+
+.parkInfo>h3{
+  margin: 0;
+  display: block;
+}
+
+.parkAvantar{
+  padding-top: 20px;
+  width: 100%;
+}
+.avantar{
+  border-radius: 50% 50%;
+  /*width:100px;*/
+  height: 100px;
+  clip-path: circle();
+  /*position: fixed;*/
+}
