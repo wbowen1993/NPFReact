@@ -11,7 +11,7 @@ class Signup extends Component{
       hover1: false, 
       hover2: true
     }
-    
+
     this.toggleHover1 = this.toggleHover1.bind(this);
     this.toggleHover2 = this.toggleHover2.bind(this);
   };
@@ -165,7 +165,6 @@ export default class User extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.showValidation = this.showValidation.bind(this);
     this.clearValidation = this.clearValidation.bind(this);
     this.handleSignUpSubmit = this.handleSignUpSubmit.bind(this);
