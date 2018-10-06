@@ -1,0 +1,130 @@
+.login-bng{
+	background-image: url(glacier_as_index.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
+	/*padding:calc(50vh - 30px) 50vw;*/
+
+	height:calc(100vh - 60px);
+	width: 100vw;
+	position: relative;
+}
+
+.login-bng::after{
+	z-index: 1;
+	content: "";
+	top: 0;
+    left: 0;
+    height: calc(100vh - 70px);
+    width: 100%;
+    position: absolute;
+    background: rgba(66,66,66,0.3);
+}
+
+.login-board{
+	z-index: 100;
+	width: 30%;
+	min-width: 400px;
+	max-width: 500px;
+	margin: auto;
+	position: relative;
+	z-index: 100;
+	background: inherit;
+	top:30vh;
+	background: linear-gradient(15deg, #355c7d, #6c5b7b, #c06c84);
+	color: white;
+	box-shadow: 0 0 10px 2px rgba(20, 20, 20, 0.7);
+	border-radius: 10px;
+	transition: 0.5s;
+}
+
+.login-wrapper{
+    text-align: center;
+    padding: 40px 30px;
+    margin: auto;
+	
+}
+input{
+	left: 0;
+}
+
+form{
+	width: 80%;
+	margin: auto;
+}
+
+::placeholder{
+	color:#bbb;
+	font-weight: lighter;
+	font-style: oblique;
+	font-size: 0.8em;
+}
+
+.form_input{
+	background:transparent;
+	border:0;
+	border-bottom: 1px solid #ccc;
+	/*height: 36px;*/
+	font-size: 20px;
+	height: 100%;
+	font-weight: lighter;
+	padding-left: 40px;
+	outline: none;
+	caret-color:#ccc;
+	width: calc(100% - 40px);
+	padding-bottom: 5px;
+	color: white;
+}
+
+.form_input:focus{
+	box-shadow: 0 4px 5px -4px #ccc;
+}
+
+.input_div{
+	height:36px;
+	position: relative;
+	margin-bottom: 40px;
+}
+
+.input_icon{
+	height: 100%;
+	left: 0;
+	position: absolute;
+}
+
+.submit-div{
+	/*display: flex;*/
+	/*justify-content: space-around;*/
+}
+
+.submit-btn{
+	padding: 10px;
+	font-size: 16px;
+	border-radius: 0;
+	/*min-width: 100px;*/
+	width: 50%;
+	font-weight: lighter;
+	transition: 0.4s all ease;
+	z-index: 1;
+	opacity: 1
+}
+
+.submit-btn:nth-child(1){
+	border-top-left-radius: 20px;
+	border-right: 0;
+}
+
+.submit-btn:nth-child(2){
+	border-bottom-right-radius: 20px;
+}
+
+.submit-btn:nth-child(1):hover{
+	color: rgba(0, 0, 0, 0.5);
+	background-color: white;
+}
+
+.submit-btn:nth-child(2):hover{
+	color: rgba(0, 0, 0, 0.5);
+	background-color: white;
+}
