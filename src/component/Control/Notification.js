@@ -32,6 +32,7 @@ export default class Notification extends Component{
 					<div className="btn" id="back_to_main">
 						{this.state.error_code == 0 && <Link to="/" className="links">BACK TO MAIN PAGE</Link>}
 						{this.state.error_code == 1 && <Link to="/login" className="links">LOG IN</Link>}
+						{this.state.error_code == 2 && <Link to="/logout" className="links">LOG OUT</Link>}
 					</div>
 				</div>
 			</div>

@@ -2,155 +2,8 @@ import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
 import "./login.css";
 import Notification from "../Control/Notification";
-import user_img from "./user.png";
-import pwd_img from "./pwd.png";
-
-class Signup extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-      hover1: false, 
-      hover2: false
-    }
-
-    this.toggleHover1 = this.toggleHover1.bind(this);
-    this.toggleHover2 = this.toggleHover2.bind(this);
-  };
-
-  toggleHover1(){
-    this.setState({hover1: !this.state.hover1})
-  }
-
-  toggleHover2(){
-    this.setState({hover2: !this.state.hover2})
-  }
-
-  render(){
-
-    var width1, width2;
-    if (this.state.hover1) {
-      width2 = {width: '40%'}
-      width1 = {width: '60%'}
-    } else {
-      width2 = {width: '50%'}
-    }
-
-    if (this.state.hover2) {
-      width1 = {width: '40%'}
-      width2 = {width: '60%'}
-    } else {
-      if(this.state.hover1){
-        width1 = {width: '60%'}
-      }
-      else{
-        width1 = {width: '50%'}
-      }
-    }
-
-    return (
-      <div className="login-board">
-        <div className="login-wrapper">
-        <h2 className="formHeader">Sign Up</h2>
-        <form onSubmit={this.handleSubmit}>
-            <div className = 'input_div user'>
-              <img className = 'input_icon' src = {user_img} alt='user'/>
-              <input type = 'text' className="form_input" name="email" placeholder="email address" onChange={this.props.handlers.changeHandler} />
-              <p className="warning">{this.props.error.email_err ? this.props.error.email_err : ""}</p>
-            </div>
-            <div className ='input_div pwd'>
-              <img className = 'input_icon' src = {pwd_img} alt='pwd'/>
-              <input type = 'password' className="form_input" name="password" placeholder="password(min. 8 characters)" onChange={this.props.handlers.changeHandler} />
-              <p className="warning">{this.props.error.password_err ? this.props.error.password_err : ""}</p>
-            </div>
-            <div className ='input_div pwd'>
-              <img className = 'input_icon' src = {pwd_img} alt='pwd'/>
-              <input type = 'password' className="form_input" name="reenter" placeholder="reenter the password" onChange={this.props.handlers.changeHandler} />
-              <p className="warning">{this.props.error.reenter_err ? this.props.error.reenter_err : ""}</p>
-            </div>
-            <div className="submit-div">
-              <button className="btn submit-btn" onMouseEnter={this.toggleHover1} onMouseLeave={this.toggleHover1} onClick={this.props.handlers.showHandler} style={width1} id="signup-btn">LOG IN</button>
-              <input type="submit" className="btn submit-btn" onMouseEnter={this.toggleHover2} onMouseLeave={this.toggleHover2} onClick={this.props.handlers.signupSubmitHandler} style={width2} id="login-btn" value="SIGN UP" />
-            </div>
-        </form>
-        </div>
-      </div>
-    );
-  }
-}
-
-class Login extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-      hover1: false, 
-      hover2: false
-    }
-
-
-    this.toggleHover1 = this.toggleHover1.bind(this);
-    this.toggleHover2 = this.toggleHover2.bind(this);
-  };
-
-
-
-  toggleHover1(){
-    this.setState({hover1: !this.state.hover1})
-  }
-
-  toggleHover2(){
-    this.setState({hover2: !this.state.hover2})
-  }
-
-  render(){
-
-    var width1, width2;
-    if (this.state.hover1) {
-      width2 = {width: '40%'}
-      width1 = {width: '60%'}
-    } else {
-      width2 = {width: '50%'}
-    }
-
-    if (this.state.hover2) {
-      width1 = {width: '40%'}
-      width2 = {width: '60%'}
-    } else {
-      if(this.state.hover1){
-        width1 = {width: '60%'}
-      }
-      else{
-        width1 = {width: '50%'}
-      }
-    }
-
-    return (
-      <div className="login-board">
-        <div className="login-wrapper">
-        <h2 className="formHeader">Welcome</h2>
-        <form onSubmit={this.handleSubmit}>
-            <div className = 'input_div user'>
-              <img className = 'input_icon' src = {user_img} alt='user'/>
-              <input type = 'text' className="form_input" name="email" placeholder="email address" onChange={this.props.handlers.changeHandler} />
-              <p className="warning">{this.props.error.email_err ? this.props.error.email_err : ""}</p>
-            </div>
-            <div className ='input_div pwd'>
-              <img className = 'input_icon' src = {pwd_img} alt='pwd'/>
-              <input type = 'password' className="form_input" name="password" placeholder="password(min. 8 characters)" onChange={this.props.handlers.changeHandler}/>
-              <p className="warning">{this.props.error.password_err ? this.props.error.password_err : ""}</p>
-            </div>
-            <div className="forget">
-              <p>FORGET PASSOWORD?</p>
-            </div>
-            <div className="submit-div">
-              <input type="submit" className="btn submit-btn" onMouseEnter={this.toggleHover1} onMouseLeave={this.toggleHover1} onClick={this.props.handlers.loginSubmitHandler} style={width1} id="login-btn" value="LOG IN" />
-              <button className="btn submit-btn" onMouseEnter={this.toggleHover2} onMouseLeave={this.toggleHover2} onClick={this.props.handlers.showHandler} style={width2} id="signup-btn">SIGN UP</button>
-            </div>
-        </form>
-        </div>
-      </div>
-    );
-  }
-}
+import Login from "./Login";
+import Signup from "./Signup";
 
 export default class User extends Component {
   constructor(props) {
@@ -162,6 +15,7 @@ export default class User extends Component {
       email_err:'', 
       password_err: '', 
       reenter_err: '',
+      server_err: '',
       login_disp: true,
       redirect: false,
       notif_msg:'',
@@ -201,13 +55,14 @@ export default class User extends Component {
         return res.json();
       }).then((res) => {
         if(res.state === 1)
-          this.showValidation("email_err", res.msg);
-        else if(res.state === 0){
-          //TODO redict notification page
+          this.showValidation("server_err", res.msg);
+        else if(res.state === 0 || res.state === 2){
+          //2 for sucess and 0 for server error(database)
           this.setState({redirect:true, notif_msg: res.msg, state:1, redirect_path: '/notification'});
         }
-        else{
-          this.setState({redirect:true, notif_msg: res.msg, state:1, redirect_path: '/notification'});
+        else if(res.state === 3){
+          //3 for session issue
+          this.setState({redirect:true, notif_msg: res.msg, state:2, redirect_path: '/notification'});
         }
 
       })
@@ -222,7 +77,6 @@ export default class User extends Component {
 
   handleLoginSubmit(event) {
     const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
-    console.log(this.state.password);
     if(this.verify()){
       fetch("/user/login", {
         method:'POST',
@@ -235,15 +89,17 @@ export default class User extends Component {
         return res.json();
       }).then((res) => {
         if(res.state === 1)
-          this.showValidation("email_err", res.msg);
+          this.showValidation("server_err", res.msg);
         else if(res.state === 0){
-          //TODO redict notification page
           this.setState({redirect:true, notif_msg: res.msg, state: 0, redirect_path: '/notification'});
         }
-        else{
+        else if(res.state === 2){
           //TODO redirect profile page
           // this.boxShow();
           this.setState({redirect:true, redirect_path: '/'});
+        }
+        else if(res.state === 3){
+          this.setState({redirect:true, notif_msg: res.msg, state: 2, redirect_path: '/notification'});
         }
 
       })
@@ -269,7 +125,7 @@ export default class User extends Component {
   }
 
   error_msg_reset(){
-    this.setState({email_err:'', password_err:'', reenter_err:'',})
+    this.setState({email_err:'', password_err:'', reenter_err:'', server_err:''})
   }
 
   renderRedirect = () => {
@@ -311,7 +167,6 @@ export default class User extends Component {
         this.clearValidation("reenter_err");
       }
     }
-    // this.verify();
   }
 
   verify(){
@@ -333,7 +188,8 @@ export default class User extends Component {
     var errorMsg = {
       email_err: this.state.email_err,
       password_err: this.state.password_err,
-      reenter_err:this.state.reenter_err
+      reenter_err:this.state.reenter_err,
+      server_err:this.state.server_err
     }
 
     return (
