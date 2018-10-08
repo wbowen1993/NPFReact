@@ -1,0 +1,55 @@
+#wrapper{
+	min-width: 60%;
+	padding-top:20vh;
+	text-align: center;
+	color:white;
+}
+
+#notif_bng{
+	background-image: url(error_bng.jpg);
+	z-index: 1000;
+}
+
+#notif_bng::after{
+	background: rgba(0,0,0,0.3);
+	z-index: -1;
+}
+
+.notif{
+	width: 100%;
+	font-size: 2em;
+}
+
+#back_to_main{
+	z-index: 20;
+	display: inline-block;
+	font-weight: lighter;
+	padding: 20px;
+	font-size: 1em;
+	border:3px dashed #fff;
+	position: relative;
+}
+
+#back_to_main::after{
+	z-index: -1;
+	content: "";
+	top:6px;
+	left:6px;
+	width: calc(100% - 12px);
+	height: calc(100% - 12px);
+	position: absolute;
+	border-radius: 5px;
+	transition: 0.3s all ease;
+}
+
+#back_to_main:hover{
+	border: solid;
+}
+
+#back_to_main:hover::after{
+	background:white;
+}
+
+#back_to_main:hover .links{
+	color: rgba(0, 0, 0, 0.5);
+}
