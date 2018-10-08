@@ -1,6 +1,7 @@
 body{
 	margin: 0;
 	font-family: 'Lato', sans-serif;
+	outline: none;
 }
 
 a{
@@ -84,4 +85,27 @@ h3{
 
 .nav .btn:hover::before{
 	width: 100%;
+}
+
+.bng{
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
+	/*padding:calc(50vh - 30px) 50vw;*/
+
+	height:calc(100vh - 60px);
+	width: 100vw;
+	position: relative;
+}
+
+.bng::after{
+	z-index: 1;
+	content: "";
+	top: 0;
+    left: 0;
+    height: calc(100vh - 70px);
+    width: 100%;
+    position: absolute;
+    background: rgba(66,66,66,0.3);
 }

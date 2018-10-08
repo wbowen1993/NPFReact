@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import App from './App';
 import Header from './component/Header/Header';
 import Home from './component/Home/Home';
-import User from './component/User/Login'
+import User from './component/User/User';
+import Notification from "./component/Control/Notification";
 
 class Routes extends Component {
 	render(){
@@ -16,6 +17,7 @@ class Routes extends Component {
 					<Route path="/" component={Home} exact />
 					<Route path="/parks" component={App} />
 					<Route path="/login" component={User} />
+					<Route path="/notification" component={Notification} />
 				</Switch>
 			</div>
 		</BrowserRouter>

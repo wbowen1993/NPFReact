@@ -1,5 +1,4 @@
-.login-bng{
-	background-image: url(glacier_as_index.jpg);
+.bng{
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-attachment: fixed;
@@ -11,7 +10,7 @@
 	position: relative;
 }
 
-.login-bng::after{
+.bng::after{
 	z-index: 1;
 	content: "";
 	top: 0;
@@ -20,6 +19,10 @@
     width: 100%;
     position: absolute;
     background: rgba(66,66,66,0.3);
+}
+
+#user_bng{
+	background-image: url(glacier_as_index.jpg);
 }
 
 .login-board{

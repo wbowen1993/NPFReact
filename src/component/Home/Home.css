@@ -17,6 +17,7 @@
 	margin-top: 5vh;
 }
 #box{
+	z-index: 1;
 	position: relative;
 	width: 10vw;
 	min-width: 100px;
