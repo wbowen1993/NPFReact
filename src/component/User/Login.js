@@ -47,8 +47,7 @@ export default class Login extends Component{
     }
 
     return (
-      <div className="login-board">
-        <div className="login-wrapper">
+      <div className="login-wrapper">
         <h2 className="formHeader">Welcome</h2>
         <form onSubmit={this.handleSubmit}>
             <p className="warning">{this.props.error.server_err ? this.props.error.server_err : ""}</p>
@@ -70,7 +69,6 @@ export default class Login extends Component{
               <button className="btn submit-btn" onMouseEnter={this.toggleHover2} onMouseLeave={this.toggleHover2} onClick={this.props.handlers.showHandler} style={width2} id="signup-btn">SIGN UP</button>
             </div>
         </form>
-        </div>
       </div>
     );
   }

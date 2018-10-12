@@ -35,6 +35,7 @@
 	z-index: 100;
 	background: inherit;
 	top:30vh;
+	opacity: 1;
 	background: linear-gradient(15deg, #355c7d, #6c5b7b, #c06c84);
 	color: white;
 	box-shadow: 0 0 10px 2px rgba(20, 20, 20, 0.7);
@@ -141,4 +142,13 @@ p.warning{
 
 p.warning:empty{
 	display: none;
+}
+/*react-transition*/
+.drop-appear {
+  opacity: 0.1;
+  top:-100vh;
+}
+
+.drop-appear.drop-appear-active {
+  transition: all 1.0s ease;
 }

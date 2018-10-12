@@ -5,7 +5,7 @@ const Park = function (props){
   return (
     <div className="parkBoard">
       <div className="parkAvantar">
-        <img src={props.url} className="avantar" alt="logo"/>
+        <img src={props.url} className="thumbnail" alt="logo"/>
       </div>
       <div className="parkInfo">
         <h3>{props.name}</h3>

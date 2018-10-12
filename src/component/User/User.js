@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import "./login.css";
-import Notification from "../Control/Notification";
 import Login from "./Login";
 import Signup from "./Signup";
+import utils from "../../utils/utils";
 
 export default class User extends Component {
   constructor(props) {
@@ -19,7 +20,8 @@ export default class User extends Component {
       login_disp: true,
       redirect: false,
       notif_msg:'',
-      redirect_path: '/notification'
+      redirect_path: '/notification',
+      initial:true
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -32,6 +34,10 @@ export default class User extends Component {
     this.verify = this.verify.bind(this);
     this.renderRedirect = this.renderRedirect.bind(this);
     this.error_msg_reset = this.error_msg_reset.bind(this);
+  }
+
+  componentDidMount(){
+    this.setState({initial: false});
   }
 
   handleChange(event) {
@@ -96,7 +102,9 @@ export default class User extends Component {
         else if(res.state === 2){
           //TODO redirect profile page
           // this.boxShow();
-          this.setState({redirect:true, redirect_path: '/'});
+          utils.setCookie("cookie", res.session);
+          this.setState({redirect:true, redirect_path: '/profile' });
+
         }
         else if(res.state === 3){
           this.setState({redirect:true, notif_msg: res.msg, state: 2, redirect_path: '/notification'});
@@ -129,8 +137,15 @@ export default class User extends Component {
   }
 
   renderRedirect = () => {
-    if(this.state.redirect)
-      return <Redirect to={{pathname:this.state.redirect_path, msg: this.state.notif_msg, state: this.state.state}} />
+    if(this.state.redirect){
+      if(this.state.redirect_path == "/profile"){
+        return <Redirect to={{pathname:"/profile"}} />
+      }
+      else{
+        return <Redirect to={{pathname:this.state.redirect_path, msg: this.state.notif_msg, state: this.state.state}} />  
+      }
+    }
+
   }
 
 
@@ -193,12 +208,20 @@ export default class User extends Component {
     }
 
     return (
-      
       <div>
         {this.renderRedirect()}
         <div className="bng" id="user_bng">
-          {this.state.login_disp && <Login handlers={handlers} error={errorMsg}/>}
-          {!this.state.login_disp && <Signup handlers={handlers} error={errorMsg}/>}
+          <ReactCSSTransitionGroup
+            transitionName="drop"
+            transitionAppear={true}
+            transitionAppearTimeout={500}
+            transitionEnter={false}
+            transitionLeave={false}>
+            <div className="login-board">
+              {this.state.login_disp && <Login handlers={handlers} error={errorMsg}/>}
+              {!this.state.login_disp && <Signup handlers={handlers} error={errorMsg}/>}
+            </div>
+          </ReactCSSTransitionGroup>
         </div>
       </div>
     );

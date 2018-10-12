@@ -7,8 +7,10 @@ import Home from './component/Home/Home';
 import User from './component/User/User';
 import Logout from './component/User/Logout';
 import Notification from "./component/Control/Notification";
+import Profile from "./component/User/Profile";
 
 class Routes extends Component {
+
 	render(){
 		return (
 		<BrowserRouter>
@@ -16,10 +18,11 @@ class Routes extends Component {
 				<Header />
 				<Switch>
 					<Route path="/" component={Home} exact />
-					<Route path="/parks" component={App} />
-					<Route path="/login" component={User} />
-					<Route path="/logout" component={Logout} />
-					<Route path="/notification" component={Notification} />
+					<Route path="/parks" component={App} exact />
+					<Route path="/login" component={User} exact />
+					<Route path="/logout" component={Logout} exact />
+					<Route path="/notification" component={Notification} exact />
+					<Route path="/profile" component={Profile} exact />
 				</Switch>
 			</div>
 		</BrowserRouter>

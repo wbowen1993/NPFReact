@@ -45,8 +45,7 @@ export default class Signup extends Component{
     }
 
     return (
-      <div className="login-board">
-        <div className="login-wrapper">
+      <div className="login-wrapper">
         <h2 className="formHeader">Sign Up</h2>
         <form onSubmit={this.handleSubmit}>
             <p className="warning">{this.props.error.server_err ? this.props.error.server_err : ""}</p>
@@ -70,7 +69,6 @@ export default class Signup extends Component{
               <input type="submit" className="btn submit-btn" onMouseEnter={this.toggleHover2} onMouseLeave={this.toggleHover2} onClick={this.props.handlers.signupSubmitHandler} style={width2} id="login-btn" value="SIGN UP" />
             </div>
         </form>
-        </div>
       </div>
     );
   }

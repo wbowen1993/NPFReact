@@ -33,7 +33,6 @@ class App extends Component {
   }
 
   renderParks = (e) => {
-    console.log(e)
     return <Parks name={e.name} url={"http://" + e.image} />
   }
 

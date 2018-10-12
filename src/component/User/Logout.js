@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
+import utils from "../../utils/utils";
 
 export default class Logout extends Component {
   	constructor(props) {
@@ -14,12 +15,14 @@ export default class Logout extends Component {
 	};
 	componentDidMount(){
 		const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
+		const token = utils.getCookie("cookie");
 		fetch('/user/logout').then((res) => {
 	      return res.json();
 	    }).then((res) => {
 	      // console.log(res);
 	    	if(res.state){
 	    		console.log("hasSession");
+	    		utils.setCookie("cookie", "");
 	    		this.setState({hasSession: true, notif_msg:"Successfully logout", initial:false});
 	    	}
 		  	else
