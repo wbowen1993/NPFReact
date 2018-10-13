@@ -24,7 +24,7 @@ a{
 .logo{
 	/*position: absolute;*/
 	margin-left:10%;
-	/*height:100%;*/
+	height:100%;
 }
 .logo img{
 	height: 100%;
@@ -121,8 +121,11 @@ h3{
 	border:2px solid white;
 	border-radius: 100%;
 }
-
 .avantar{
+	border-radius: 100%;
+	object-fit: cover;
+}
+.nav .avantar{
 	position: absolute;
 	left:4px;
 	top:4px;

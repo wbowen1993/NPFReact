@@ -37,8 +37,8 @@ export default class Header extends Component{
 		        return res.json();
 		    }).then((res) => {
 		        if(res.success == 1){
-		        	console.log("TEST ", res.profile_img);
-		        	if(res.profile_img != '' && this.props.profile_img != res.profile_img){
+		        	if(res.profile_img != '' && this.state.profile_img != res.profile_img){
+		        		console.log("Change");
 		        		this.setState({profile_img: res.profile_img});
 		        	}
 		        	if(!this.state.hasSession)
@@ -78,6 +78,9 @@ export default class Header extends Component{
 
 		const images = this.importAll(require.context('../../../public/img/avantar', false));
 
+		if(this.state.profile_img ){
+			console.log(this.state.profile_img);
+		}
 		if(this.state.hasSession){
 			login_style = {display: "none"}
 			avantar_style = {display: "inline-block"}
@@ -108,8 +111,8 @@ export default class Header extends Component{
 						</span>
 						<div className="dropdown_div" style={dropdown_style}>
 							<div className="dropdown_wrapper">
-								<div className="dropdown_box"><Link to="/profile">My Profile</Link></div>
-								<div className="dropdown_box"><Link to="/logout">Log out</Link></div>
+								<div className="dropdown_box"><Link to="/profile" onClick={this.toggleAvantar}>My Profile</Link></div>
+								<div className="dropdown_box"><Link to="/logout" onClick={this.toggleAvantar}>Log out</Link></div>
 							</div>
 						</div>
 					</div>
