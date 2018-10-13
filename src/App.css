@@ -27,9 +27,8 @@
   width: 80%;
   margin: auto;
   display: flex;
-  flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-around;
+  /*justify-content: space-around;*/
 }
 
 

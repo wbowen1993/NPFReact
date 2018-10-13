@@ -23,9 +23,36 @@ function getCookie(key) {
 	
 }
 
+function match(wikiParks, localImages){
+	var obj = {};
+	for(let park of wikiParks){
+		for(let image of Object.keys(localImages)){
+			let name = image.substring(0, image.indexOf("."));
+			if(park.name.toLowerCase().indexOf(name.toLowerCase()) != -1){
+				obj[park.name] = localImages[image];
+				break;
+			}
+		}
+	}
+	return obj;
+}
+
+function importAll(r){
+    let images = {};
+    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
+    return images;
+}
+
+function npEliminate(str){
+	return str.substr(0, str.indexOf(" National Park"));
+}
+
 var utils = {
 	setCookie,
-	getCookie
+	getCookie,
+	importAll,
+	match,
+	npEliminate
 };
 
 module.exports = utils;

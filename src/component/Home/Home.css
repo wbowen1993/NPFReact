@@ -37,6 +37,7 @@ h1{
 	font-size: 4em;
 	font-family: 'Fredericka the Great', cursive;
 	letter-spacing: 2px;
+	font-weight: lighter;
 }
 #box::before{
 	z-index: -1;
