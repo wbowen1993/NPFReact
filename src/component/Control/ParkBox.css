@@ -1,0 +1,74 @@
+.parkBoard{
+  /*position: relative;*/
+  flex-basis: 20%;
+  /*background: linear-gradient(#0d3752 80px, #fff 0px);*/
+  border:1px solid #fff;
+  /*width: 240px;*/
+  height:500px;
+  transition: 0.2s all;
+  /*box-shadow: 0 1px 10px 2px #444;*/
+}
+
+.parkBoard:hover{
+  box-shadow: 0 2px 10px 0px #888;
+  /*transform: scale(1.05);*/
+  flex-basis: 35%;
+}
+
+.parkInfo{
+  padding:20px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.parkInfo>h3{
+  margin: 0;
+  display: block;
+  font-size: 3em;
+  color: white;
+  font-family: 'Monoton', cursive;
+  font-weight: lighter;
+}
+
+.parkAvantar{
+/*  border-radius: 100%;
+  margin: auto;
+  margin-top: 20px;*/
+  /*width: 100px;*/
+  position: relative;
+  height: 400px;
+  /*border:4px solid white;*/
+}
+.thumbnail{
+  object-fit: cover;
+  width:100%;
+  height: 100%;
+  /*-webkit-clip-path: circle();*/
+  /*clip-path: circle();*/
+  /*position: fixed;*/
+}
+
+.park_mask{
+  display: none;
+  height: 100%;
+  /*display: flex;*/
+  flex-direction: row;
+  /*text-align: ;*/
+  align-items: center;
+}
+
+.parkAvantar:hover .park_mask{
+  display: flex;
+}
+
+.park_mask p{
+  font-size: 1.4em;
+  font-weight: lighter;
+  letter-spacing: 0.06em;
+  font-family: 'Monoton', cursive;
+  color: white;
+  width: 100%;
+  text-align: center;
+}

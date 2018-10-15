@@ -1,0 +1,54 @@
+.searchResultDropdown{
+	margin-top:10px;
+	box-shadow: 0px 0px 5px 0px #aaa;
+	/*border:1px solid #ccc;	*/
+	border-radius: 10px;
+}
+
+.searchResultDropdown p{
+	padding:15px 20px;
+	color:#ccc;
+	border-bottom:1px solid #ccc;
+	margin:0;
+	font-size: 1.4em;
+}
+
+.searchResultLine{
+	display: flex;
+}
+
+.searchResultLine:hover .searchName{
+	background:#eee;
+}
+
+.searchResultLine:hover a{
+	color:#0d3752;
+}
+
+.searchState{
+	flex-basis:20%;
+	align-items: center;
+	text-align: center;
+	background: #0d3752;
+	color:white !important;
+}
+
+.searchName{
+	flex-basis: 80%;
+}
+
+.searchName a{
+	color:#ccc;
+}
+
+.searchResultLine:last-child p{
+	border-bottom: 0;
+}
+
+.searchResultLine:first-child .searchState{
+	border-top-left-radius: 5px;
+}
+
+.searchResultLine:last-child .searchState{
+	border-bottom-left-radius: 5px;
+}

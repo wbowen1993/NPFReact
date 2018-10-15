@@ -72,10 +72,10 @@ form{
 	/*height: 36px;*/
 	font-size: 20px;
 	height: 100%;
-	font-weight: lighter;
 	padding-left: 40px;
 	outline: none;
 	caret-color:#ccc;
+	font-weight: lighter;
 	width: calc(100% - 40px);
 	padding-bottom: 5px;
 	color: white;

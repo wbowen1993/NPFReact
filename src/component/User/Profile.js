@@ -20,7 +20,6 @@ export default class Profile extends Component{
 	      username_input: '',
 	      uploadFile: null,
 	      imagePreviewUrl: null,
-	      redirect: false,
 	      redirect_path: '',
 	      error_msg: ''
 	    };

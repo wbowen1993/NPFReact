@@ -26,12 +26,18 @@ function getCookie(key) {
 function match(wikiParks, localImages){
 	var obj = {};
 	for(let park of wikiParks){
+		let flag = false;
 		for(let image of Object.keys(localImages)){
 			let name = image.substring(0, image.indexOf("."));
 			if(park.name.toLowerCase().indexOf(name.toLowerCase()) != -1){
 				obj[park.name] = localImages[image];
+				flag = true;
+				delete localImages[image];
 				break;
 			}
+		}
+		if(!flag){
+			console.log(park.name);
 		}
 	}
 	return obj;
@@ -44,7 +50,9 @@ function importAll(r){
 }
 
 function npEliminate(str){
-	return str.substr(0, str.indexOf(" National Park"));
+	if(str.indexOf("National Park of") == 0)
+		return str.substr(str.indexOf("of") + 3);
+	return str;
 }
 
 var utils = {

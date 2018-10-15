@@ -11,7 +11,7 @@ class Home extends Component{
           <h1>&#10095;&#10095;&#10095; FIND YOUR PARK &#10094;&#10094;&#10094;</h1>
         </div>
         <div id="box">
-          <Link to="/parks" className="links">EXLORER MORE</Link>
+          <Link to="/features" className="links">EXLORER MORE</Link>
         </div>
       </div>
     );

@@ -15,7 +15,6 @@ export default class Logout extends Component {
 	};
 	componentDidMount(){
 		const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
-		const token = utils.getCookie("cookie");
 		fetch('/user/logout').then((res) => {
 	      return res.json();
 	    }).then((res) => {
