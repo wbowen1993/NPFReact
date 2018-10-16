@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 import './ParkBox.css';
 
 const ParkBox = function (props){
@@ -10,9 +11,11 @@ const ParkBox = function (props){
       </div>
       <div className="parkAvantar">
         <img src={props.url} className="thumbnail" alt="logo"/>
-        <div className="mask park_mask">
-          <p className="park_title">{props.name}</p>
-        </div>
+        <Link to={"/park/" + props.code}>
+          <div className="mask park_mask">
+            <p className="park_title">{props.name}</p>
+          </div>
+        </Link>
       </div>
     </div>
   );

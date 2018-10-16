@@ -63,7 +63,7 @@ export default class Features extends Component {
   }
 
   renderParks = (e, index) => {
-    return <ParksBox name={utils.npEliminate(e.name)} url={this.state.mapping[e.name]} index = {index + 1} colors = {this.state.colors[index]}/>
+    return <ParksBox key={index} name={utils.npEliminate(e.name)} url={this.state.mapping[e.name]} index={index + 1} colors={this.state.colors[index]} code={this.state.parks[index].parkCode} />
   }
 
   renderRedirect = () => {

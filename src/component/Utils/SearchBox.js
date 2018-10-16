@@ -7,8 +7,8 @@ const SearchBox = function (props){
     <div className="search_div">
       <input type="text" className="search_input" onChange={props.searchChange}/>
       <div className="searchResultDropdown">{
-        props.qualified.map(function(e){
-          return <div className="searchResultLine">
+        props.qualified.map(function(e, i){
+          return <div key={i} className="searchResultLine">
             <p className="searchState">{e.states}</p>
             <p className="searchName"><Link to={"/park/" + e.code}>{e.name}</Link></p>
           </div>
