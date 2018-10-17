@@ -36,8 +36,9 @@ export default class Park extends Component{
 	    .then((res) => {
 	    	if(res.state == 1){
 	    		console.log(res.weather);
-		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession});
-		    	//mock data
+	    		//[TODO]mock ranking
+	    		let ranking = 1 + Math.floor(Math.random() * 59);
+		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
 		    }
 	    })
@@ -109,7 +110,7 @@ export default class Park extends Component{
 		if(!this.state.initial){
 			let arr = [this.state.info];
 			let mapping = utils.match(arr, images);
-			console.log(encodeURI(mapping[this.state.info.name]));
+			// console.log(encodeURI(mapping[this.state.info.name]));
 			style = {backgroundImage:"url(" + encodeURI(mapping[this.state.info.name]) + ")"};
 		}
 
@@ -179,10 +180,29 @@ export default class Park extends Component{
 									</div>
 								</div>
 								<div className="park_right">
+									<div className="ranking_board">
+										<h1>{this.state.ranking}</h1>
+									</div>
+									<div className="name_board">
+									<div className="states_board">
+										{
+											this.state.info.states.split(",").map(function(e, i){
+												return <Link key={i} to="/">{e}</Link>
+											})
+										}
+									</div>
+									<h4>{this.state.info.name}</h4>
+									</div>
 									<div className="park_user_area">
 										<button className="park_fav_btn" onClick={this.addToWatch}>ADD TO WATCH</button>
 										<p style={loginWarningStyle}>Please&ensp;<Link to="/login">login</Link>&ensp;first <b onClick={this.closeWarning}>&#10005;</b></p>
 										<button className="park_review_btn">WRITE A REVIEW</button>
+									</div>
+									<div className="link_area">
+										<a href={this.state.info.url}>Office Site(NPS)</a>
+										<a href={this.state.info.directionsUrl}>More Direction Info</a>
+									</div>
+									<div className="tag_area">
 									</div>
 								</div>
 							</div>

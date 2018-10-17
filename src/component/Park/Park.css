@@ -34,7 +34,7 @@
 .alert_line{
 	display: flex;
 	align-items: center;
-	width: 100%;
+	width: calc(100% - 20px);
 	margin-top:5px;
 	padding: 10px;
 	border:1px solid #ccc;
@@ -91,7 +91,7 @@
 .park_user_area button{
 	width: 100%;
 	padding:10px 0px;
-	border-radius: 100px;
+	border-radius: 5px;
 	font-size: 1em;
 	outline:none;
 	font-weight: 900;
@@ -165,22 +165,6 @@
 	cursor: pointer;
 }
 
-/*.content_option:first-child{
-	background: #33ccff;
-}
-
-.content_option:nth-child(2){
-	background: #8080ff;
-}
-
-.content_option:nth-child(3){
-	background: #ff0066;
-}
-
-.content_option:nth-child(4){
-	background: #009999;
-}*/
-
 .content_option:hover, .content_option:active, .content_option:focus{
 	background: #0d3752;
 }
@@ -195,6 +179,87 @@
 	bottom: -6px;
 	left: calc(50% - 6px);
 	/*display: none;*/
+}
+
+.link_area{
+	display: flex;
+	flex-direction: column;
+}
+
+.link_area a{
+	width: 100%;
+	margin-top:10px;
+	background: #0d3752;
+	color: white;
+	border-radius: 5px;
+	text-align: center;
+	padding: 10px 0px;
+	font-weight: 900;
+}
+
+.link_area a:hover{
+	color:yellow;
+}
+
+.ranking_board{
+	text-align: center;
+    border-radius: 20px;
+    width: 4em;
+    height: 4em;
+    border-radius: 100%;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.ranking_board:hover{
+	background: #0d3752;
+	color: yellow;
+}
+
+.ranking_board:hover h1{
+	color: yellow;
+}
+
+.ranking_board h1{
+	font-weight: lighter;
+	font-size:3em;
+	display: inline-block;
+	margin: 0;
+	line-height: 1.5em;
+	color: #0d3752;
+	border-radius: 100%;
+}
+
+.name_board{
+	text-align: center;
+	/*font-style: italic;*/
+	font-weight: lighter;
+}
+
+.states_board{
+	display: flex;
+	justify-content: space-around;
+}
+
+.states_board a{
+	padding:5px 0px;
+	flex-basis: 30%;
+	border-radius: 300px;
+	background: #0d3752;
+}
+
+.states_board a:hover{
+	color: yellow;
+}
+
+.name_board h4{
+	font-family: 'Lobster', cursive;
+	margin:10px 0px;
+	font-size:2em;
+	color:#0d3752;
+	font-weight: lighter;
 }
 
 
