@@ -20,6 +20,8 @@
 	transition: 0.4s all;
 }
 
+
+
 .weather_box i{
 	/*color:yellow;*/
 	padding:15px;
@@ -28,7 +30,7 @@
 
 .weather_box:hover{
 	box-shadow: 0px 0px 5px 0px #ccc;
-	background: #0099cc;
+	background: #00bfff;
 	transform: scale(1.1) perspective(1000px) rotateY(20deg);
 }
 
@@ -59,4 +61,19 @@
 	margin-bottom: 10px;
 	justify-content: space-between;
 	border-bottom: 2px solid white;
+}
+
+.err_board{
+	width: 100%;
+	background: #00b4db; /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #0d3752, #0083b0);
+	background: linear-gradient(to right, #0d3752, #0083b0);
+	text-align: center;
+	box-shadow: 0px 0px 5px 0px #777;
+	color: yellow;
+}
+
+.err_board h2{
+	font-weight: 900;
+	margin: 50px 0;
 }

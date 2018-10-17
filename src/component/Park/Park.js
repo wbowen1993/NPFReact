@@ -35,52 +35,10 @@ export default class Park extends Component{
 	    })
 	    .then((res) => {
 	    	if(res.state == 1){
+	    		console.log(res.weather);
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession});
 		    	//mock data
-		    	let weather = [{
-		    		date: "Jan 16",
-		    		temp_min: 75,
-		    		temp_max: 90,
-		    		desc:"Clear Sky",  
-		    		id: 800,
-		    		"humidity": 79,
-		    		"clouds": 8
-		    	},{
-		    		date: "Jan 17",
-		    		temp_min: 75,
-		    		temp_max: 90,
-		    		desc:"Clear Sky", 
-		    		id: 800,
-		    		"humidity": 79,
-		    		"clouds": 8
-		    	},{
-		    		date: "Jan 18",
-		    		temp_min: 75,
-		    		temp_max: 90,
-		    		desc:"Clear Sky",  
-		    		id: 800,
-		    		"humidity": 79,
-		    		"clouds": 8
-		    	},
-		    	{
-		    		date: "Jan 19",
-		    		temp_min: 75,
-		    		temp_max: 90,
-		    		desc:"Clear Sky", 
-		    		id: 800,
-		    		"humidity": 79,
-		    		"clouds": 8
-		    	},
-		    	{
-		    		date: "Jan 20",
-		    		temp_min: 75,
-		    		temp_max: 90,
-		    		desc:"Clear Sky", 
-		    		id: 500,
-		    		"humidity": 79,
-		    		"clouds": 8
-		    	}];
-		    	this.setState({weather});
+		    	this.setState({weather: res.weather});
 		    }
 	    })
 	    .catch((err) => {
@@ -214,7 +172,7 @@ export default class Park extends Component{
 										</div>
 									</div>
 									<div className="park_content_wrapper">
-										{this.state.menu == 0 && <Overview />}
+										{this.state.menu == 0 && <Overview info={this.state.info}/>}
 										{this.state.menu == 1 && <Weather weather={this.state.weather}/>}
 										{this.state.menu == 2 && <Campsite />}
 										{this.state.menu == 3 && <Gallery />}

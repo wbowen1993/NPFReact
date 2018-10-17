@@ -55,12 +55,41 @@ function npEliminate(str){
 	return str;
 }
 
+function dayTransform(obj){
+	const mapping = {
+		"monday": 0,
+		"tuesday": 1,
+		"wednesday": 2,
+		"thursday": 3,
+		"friday": 4,
+		"saturday": 5,
+		"sunday": 6
+	};
+
+	let res = new Array(7);
+	for(let key of Object.keys(obj)){
+		key = key.toLowerCase();
+
+		res[mapping[key]] = {
+			day: key,
+			hour: obj[key]
+		}
+	}
+	return res;
+}
+
+function judgeValidDate(date){
+	return Date.parse(date) - Date.now() > 0 ;
+}
+
 var utils = {
 	setCookie,
 	getCookie,
 	importAll,
 	match,
-	npEliminate
+	npEliminate,
+	dayTransform,
+	judgeValidDate
 };
 
 module.exports = utils;
