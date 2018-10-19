@@ -1,0 +1,82 @@
+.campsite_wrapper{
+	margin-top: 20px;
+}
+
+#map{
+	height: 400px;
+	box-shadow: 0px 0px 5px 0px #555;
+}
+
+.campsite_info_box{
+	margin-top:10px;
+	display: flex;
+	flex-direction: column;
+}
+
+.campsite_info_box .err_board h2{
+	/*font-size: 1.3em;*/
+	color:white;
+	font-weight: lighter;
+}
+
+.campsite_info_box .err_board a{
+	color:yellow;
+	font-weight: 900;
+}
+
+.campsite_info_row{
+	display: flex;
+	flex-direction: row;
+}
+
+
+.campsite_info_row h4{
+	font-size: 1.2em;
+}
+
+.campsite_info_row:last-child .campsite_info_wrapper{
+	border:0 !important;
+}
+
+.campsite_index{
+	color: white;
+	background: cadetblue;
+	font-size: 2em;
+	display: flex;
+	justify-content: center;
+	flex-basis: 10%;
+	align-items: center;
+	border-bottom: 1px solid white;
+}
+
+.campsite_info_row:last-child .campsite_index{
+	border:0;
+}
+
+.same_line{
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.same_line *{
+	padding: 5px 0px;
+	font-size: 0.8em;
+}
+
+.same_line h5{
+	font-style: italic;
+	margin: 0;
+}
+
+.same_line a{
+	background: cadetblue;
+	padding: 5px 10px;
+	margin-left: 10px;
+	border-radius: 100px;
+}
+
+
+.campsite_info_wrapper{
+	flex-basis: 90%;
+	border-bottom: 1px solid cadetblue!important;
+}

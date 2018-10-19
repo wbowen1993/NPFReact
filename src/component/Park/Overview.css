@@ -1,6 +1,5 @@
 .acc_content{
 	display: none;
-	padding: 20px;
 	border-radius: 5px;
 	box-shadow: 0px 0px 2px 0px #444;
 	color:cadetblue;
@@ -23,6 +22,7 @@
 	width: calc(100% - 40px);
 	color:white;
 	margin: 0;
+	cursor: pointer;
 	/*margin: 2px 0px;*/
 	margin-top: 8px;
 	background: #248f8f;
@@ -40,7 +40,12 @@
 	cursor: pointer;
 }
 
+.plain_content{
+	padding: 15px;
+}
+
 .info_wrapper{
+	padding:15px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid cadetblue;
 }

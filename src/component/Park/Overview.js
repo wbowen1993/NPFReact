@@ -37,27 +37,27 @@ export default class Overview extends Component{
 		return (
 			<div className="overview_wrapper">
 				<div className="acc_wrapper">
-					<div className="acc_nav_wrapper">
+					<div className="acc_nav_wrapper" id="0" onClick={this.changeHandle} >
 						<h3>Direction</h3>
-						<h3 id="0" onClick={this.changeHandle} >{symbol[0]}</h3>
+						<h3>{symbol[0]}</h3>
 					</div>
-					<div className="acc_content" style={contentStyle[0]}>
+					<div className="acc_content plain_content" style={contentStyle[0]}>
 						<p>{info.directionsInfo}</p>
 					</div>
 				</div>
 				<div className="acc_wrapper">
-					<div className="acc_nav_wrapper">
+					<div className="acc_nav_wrapper" id="1" onClick={this.changeHandle} >
 						<h3>General Weather</h3>
-						<h3 id="1" onClick={this.changeHandle} >{symbol[1]}</h3>
+						<h3>{symbol[1]}</h3>
 					</div>
-					<div className="acc_content" style={contentStyle[1]}>
+					<div className="acc_content plain_content" style={contentStyle[1]}>
 						<p>{info.weatherInfo}</p>
 					</div>
 				</div>
 				<div className="acc_wrapper">
-					<div className="acc_nav_wrapper">
+					<div className="acc_nav_wrapper" id="2" onClick={this.changeHandle} >
 						<h3>Fees</h3>
-						<h3 id="2" onClick={this.changeHandle} >{symbol[2]}</h3>
+						<h3>{symbol[2]}</h3>
 					</div>
 					<div className="acc_content" style={contentStyle[2]}>
 						{info.entranceFees.length == 0 && 
@@ -74,9 +74,9 @@ export default class Overview extends Component{
 					</div>
 				</div>
 				<div className="acc_wrapper">
-					<div className="acc_nav_wrapper">
+					<div className="acc_nav_wrapper" id="3" onClick={this.changeHandle} >
 						<h3>Operating Hours</h3>
-						<h3 id="3" onClick={this.changeHandle} >{symbol[3]}</h3>
+						<h3>{symbol[3]}</h3>
 					</div>
 					<div className="acc_content" style={contentStyle[3]}>
 						{info.operatingHours.length == 0 && 

@@ -101,17 +101,22 @@
 	margin-top:10px;
 }
 
-.park_user_area p{
-	margin: 0;
+.park_user_area .login_notif{
 	margin-top: 10px;
 	font-weight: lighter;
-	width: 100%;
+	width: calc(100% - 12px);
 	border-radius: 5px;
 	border:1px solid #ff9900;
 	padding:5px;
 	background: #ffe0b3;
 	position: relative;
+	justify-content: space-around;
 	display: none;
+}
+
+.login_notif p{
+	margin: 0;
+	flex-basis: 90%;
 }
 
 .park_user_area a{
@@ -119,8 +124,8 @@
 }
 
 .park_user_area b{
-	right:15px;
-	position: absolute;
+
+	flex-basis: 10%;
 	cursor: pointer;
 }
 
@@ -190,7 +195,7 @@
 	width: 100%;
 	margin-top:10px;
 	background: #0d3752;
-	color: white;
+	color: #aaff00;
 	border-radius: 5px;
 	text-align: center;
 	padding: 10px 0px;

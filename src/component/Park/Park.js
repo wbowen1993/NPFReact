@@ -35,11 +35,13 @@ export default class Park extends Component{
 	    })
 	    .then((res) => {
 	    	if(res.state == 1){
-	    		console.log(res.weather);
+	    		console.log(res.campsites);
 	    		//[TODO]mock ranking
 	    		let ranking = 1 + Math.floor(Math.random() * 59);
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
+		    	let latLon = [utils.parseLatLon(this.state.info.latLong).lat, utils.parseLatLon(this.state.info.latLong).lon];				
+				this.setState({latLon, campsites: res.campsites});
 		    }
 	    })
 	    .catch((err) => {
@@ -119,7 +121,7 @@ export default class Park extends Component{
 			if(!this.state.showLoginWarning)
 				loginWarningStyle = {display: "none"};
 			else
-				loginWarningStyle = {display: "block"};				
+				loginWarningStyle = {display: "flex"};
 		}
 
 		let menuNavColor=["#33ccff", "#8080ff", "#ff0066", "#009999"];
@@ -175,7 +177,7 @@ export default class Park extends Component{
 									<div className="park_content_wrapper">
 										{this.state.menu == 0 && <Overview info={this.state.info}/>}
 										{this.state.menu == 1 && <Weather weather={this.state.weather}/>}
-										{this.state.menu == 2 && <Campsite />}
+										{this.state.menu == 2 && <Campsite parkLatLon={this.state.latLon} campsites={this.state.campsites} code={this.state.info.parkCode}/>}
 										{this.state.menu == 3 && <Gallery />}
 									</div>
 								</div>
@@ -195,7 +197,7 @@ export default class Park extends Component{
 									</div>
 									<div className="park_user_area">
 										<button className="park_fav_btn" onClick={this.addToWatch}>ADD TO WATCH</button>
-										<p style={loginWarningStyle}>Please&ensp;<Link to="/login">login</Link>&ensp;first <b onClick={this.closeWarning}>&#10005;</b></p>
+										<div style={loginWarningStyle} className="login_notif"><p>Please&ensp;<Link to="/login">login</Link>&ensp;first </p><b onClick={this.closeWarning}>&#10005;</b></div>
 										<button className="park_review_btn">WRITE A REVIEW</button>
 									</div>
 									<div className="link_area">

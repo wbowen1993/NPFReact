@@ -82,6 +82,13 @@ function judgeValidDate(date){
 	return Date.parse(date) - Date.now() > 0 ;
 }
 
+function parseLatLon(str){
+	let res = {lat:'', lon:''};
+	res.lat = str.substring(str.indexOf("lat:") + 4, str.indexOf(","));
+	res.lon = str.substring(str.indexOf("long:") + 5);
+	return res;
+}
+
 var utils = {
 	setCookie,
 	getCookie,
@@ -89,7 +96,8 @@ var utils = {
 	match,
 	npEliminate,
 	dayTransform,
-	judgeValidDate
+	judgeValidDate,
+	parseLatLon
 };
 
 module.exports = utils;
