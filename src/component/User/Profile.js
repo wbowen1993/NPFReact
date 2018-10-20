@@ -50,8 +50,8 @@ export default class Profile extends Component{
 			}
 			else if(res.state === 2){
 			  //3 for session issue
-			  // console.log(res.info);
-			  this.setState({redirect:false, user:res.info, username:res.info.username, username_input: res.info.username, imagePreviewUrl: res.info.profile_img});
+			  console.log(res.watchList);
+			  this.setState({redirect:false, user:res.info, username:res.info.username, watchList: res.watchList, username_input: res.info.username, imagePreviewUrl: res.info.profile_img});
 			}
 			this.setState({initial:false});
 		})
@@ -154,7 +154,6 @@ export default class Profile extends Component{
 			images = this.importAll(require.context('../../../public/img/avantar', false));
 			if(this.state.user.profile_img != ''){
 				avantar = images[this.state.user.profile_img];
-				console.log(this.state.user.profile_img);
 			}
 			else{
 				avantar = images["default.svg"];
@@ -208,7 +207,19 @@ export default class Profile extends Component{
 									</div>
 								</div>
 								<div className="box content_box">
-									placeholder
+									<h3>Watch List</h3>
+									{
+										!this.state.watchList.length && 
+										<h2>Your watch list is empty</h2>
+									}
+									{
+										this.state.watchList.map(function(e, i){
+											return <div key={i} className="watchlist_wrapper">
+												<p>{e.name}</p>
+												<button className="btn watch_btn">Unwatch</button>
+											</div>
+										})
+									}
 								</div>
 							</div>
 							<div className="mask bng_mask" style={bng_style}>
