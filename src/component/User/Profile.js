@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+import utils from "../../utils/utils";
+
 import './Profile.css';
+
 import photo_icon from './photo.svg';
 import review_icon from './review.svg';
 import plus from './plus.svg';
-import axios from 'axios';
 
 
 export default class Profile extends Component{
@@ -33,8 +37,7 @@ export default class Profile extends Component{
 	}
 
 	componentDidMount(){
-		const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
-    
+		
 		fetch("/user/profile").then((res) => {
 	        return res.json();
 		}).then((res) => {
@@ -53,7 +56,7 @@ export default class Profile extends Component{
 			this.setState({initial:false});
 		})
 		.catch((err) => {
-			this.setState({redirect:true, notif_msg: SERVER_ERR_MSG, state:0, redirect_path: '/notification'});
+			this.setState({redirect:true, notif_msg: utils.SERVER_ERR_MSG, state:0, redirect_path: '/notification'});
 			this.setState({initial:false});
 		});
 	}

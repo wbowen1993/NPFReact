@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import './Header.css';
 import logo from './logo.png';
-// import default_avantar from './default.png';
 import utils from '../../utils/utils';
 
 export default class Header extends Component{

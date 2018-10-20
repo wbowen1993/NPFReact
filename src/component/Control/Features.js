@@ -27,7 +27,6 @@ export default class Features extends Component {
   }
 
   getParks = (tops) => {
-    const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
     fetch('/parks').then((res) => {
       return res.json();
     }).then((res) => {
@@ -58,7 +57,7 @@ export default class Features extends Component {
       this.setState({all_parks:res.table, parks:parks_arr, colors, mapping: utils.match(res["table"], images)});
     })
     .catch((err) => {
-      this.setState({redirect: true, notif_msg: SERVER_ERR_MSG});
+      this.setState({redirect: true, notif_msg: utils.SERVER_ERR_MSG});
     });
   }
 

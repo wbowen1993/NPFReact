@@ -14,7 +14,6 @@ export default class Logout extends Component {
 		this.renderRedirect = this.renderRedirect.bind(this);
 	};
 	componentDidMount(){
-		const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
 		fetch('/user/logout').then((res) => {
 	      return res.json();
 	    }).then((res) => {
@@ -30,7 +29,7 @@ export default class Logout extends Component {
 	    .catch((err) => {
 	    	//
 	    	console.log("went wrong");
-			this.setState({hasSession: true, notif_msg: SERVER_ERR_MSG, initial:false});
+			this.setState({hasSession: true, notif_msg: utils.SERVER_ERR_MSG, initial:false});
 	    });
 	}
 	componentWillMount(){

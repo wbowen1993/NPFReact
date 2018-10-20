@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 import './Park.css';
 import caution from './caution.svg';
 import danger from './danger.svg';
 import info from './info.svg';
+import checked from './checked.svg';
 
 import utils from '../../utils/utils';
 import Overview from './Overview';
@@ -18,8 +19,11 @@ export default class Park extends Component{
 		this.state = {
 			initial: true,
 			hasSession: false,
+			watched: false,
 			showLoginWarning: false,
-			menu:0
+			redirect: false,
+			menu:0,
+			notif_window: 0
 		};
 
 		this.addToWatch = this.addToWatch.bind(this);
@@ -35,13 +39,13 @@ export default class Park extends Component{
 	    })
 	    .then((res) => {
 	    	if(res.state == 1){
-	    		console.log(res.campsites);
+	    		console.log(res.hasSession);
 	    		//[TODO]mock ranking
 	    		let ranking = 1 + Math.floor(Math.random() * 59);
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
 		    	let latLon = [utils.parseLatLon(this.state.info.latLong).lat, utils.parseLatLon(this.state.info.latLong).lon];				
-				this.setState({latLon, campsites: res.campsites});
+				this.setState({latLon, campsites: res.campsites, watched: res.watched});
 		    }
 	    })
 	    .catch((err) => {
@@ -85,13 +89,54 @@ export default class Park extends Component{
 	}
 
 	addToWatch = () => {
-		if(!this.hasSession){
+		if(!this.state.hasSession){
 			if(!this.state.showLoginWarning){
 				this.setState({showLoginWarning: true});
 			}
 		}
 		else{
-
+			console.log("here");
+			this.setState({showLoginWarning: false});
+			const path = this.props.location.pathname;
+			const code = path.substring(path.lastIndexOf("/") + 1);
+			fetch('/parks/' + code + "/watch", {
+				method:'POST',
+				headers:{'Content-Type': 'application/json'},  
+			})
+			.then((res) => {
+				return res.json();
+			})
+			.then((res) => {
+				if(res.state === 1){
+					this.setState({watched: true});
+					const temp = this.state.notif_window;
+					if(temp == 0)
+						this.setState({notif_window: 1});
+					else if(temp == 1)
+						this.setState({notif_window: 2});
+					else
+						this.setState({notif_window: 1});
+				}
+				else if(res.state === 2){
+					this.setState({watched: false});
+					const temp = this.state.notif_window;
+					if(temp == 0)
+						this.setState({notif_window: 1});
+					else if(temp == 1)
+						this.setState({notif_window: 2});
+					else
+						this.setState({notif_window: 1});
+				}
+				else if(res.state === -1){
+					this.setState({hasSession: false});
+				}
+				else{
+					this.setState({redirect:true});
+				}
+			})
+			.catch((err) => {
+				this.setState({redirect:true});
+			});
 		}
 	}
 
@@ -105,23 +150,38 @@ export default class Park extends Component{
 		this.setState({menu: e.target.id});
 	}
 
+	renderRedirect = () => {
+		if(this.state.redirect){
+			return <Redirect to={{pathname:'/notification', msg: utils.SERVER_ERR_MSG, state: 0}} />  
+		}
+	}
+
 
 	render(){
 		const images = utils.importAll(require.context('../../../public/img/parks', false));
-		let style;
+		let banner_style, loginWarningStyle, watched;
+		let watched_btn_content, notif_content;
 		if(!this.state.initial){
 			let arr = [this.state.info];
 			let mapping = utils.match(arr, images);
-			// console.log(encodeURI(mapping[this.state.info.name]));
-			style = {backgroundImage:"url(" + encodeURI(mapping[this.state.info.name]) + ")"};
-		}
+			banner_style = {backgroundImage:"url(" + encodeURI(mapping[this.state.info.name]) + ")"};
 
-		let loginWarningStyle;
-		if(!this.state.initial){
 			if(!this.state.showLoginWarning)
 				loginWarningStyle = {display: "none"};
 			else
 				loginWarningStyle = {display: "flex"};
+
+			if(this.state.hasSession && this.state.watched){
+				watched = {background: "#ec5f5f", color: "white"};
+				watched_btn_content = "WATCHED";
+				notif_content = "Watched successfully";
+			}
+			else{
+				watched = {background: "white", color: "#ec5f5f"};
+				watched_btn_content = "ADD TO WATCH";
+				notif_content = "Unwatched successfully";
+			}
+
 		}
 
 		let menuNavColor=["#33ccff", "#8080ff", "#ff0066", "#009999"];
@@ -143,7 +203,11 @@ export default class Park extends Component{
 			<div>
 				{!this.state.initial &&
 					<div>
-						<div className="park_banner" style={style}>
+						{this.renderRedirect()}
+						<div className={this.state.notif_window == 0 ? "notif_window notif_window0" : (this.state.notif_window == 1 ? "notif_window notif_window1" : "notif_window notif_window2")}>
+							<img src={checked} className="notif_checked"/>{notif_content}
+						</div>
+						<div className="park_banner" style={banner_style}>
 							<h1>{this.state.info.name}</h1>
 						</div>
 						<div className="park_wrapper">
@@ -196,7 +260,9 @@ export default class Park extends Component{
 									<h4>{this.state.info.name}</h4>
 									</div>
 									<div className="park_user_area">
-										<button className="park_fav_btn" onClick={this.addToWatch}>ADD TO WATCH</button>
+										<button className="park_fav_btn" onClick={this.addToWatch} style={watched}>
+										{watched_btn_content}
+										</button>
 										<div style={loginWarningStyle} className="login_notif"><p>Please&ensp;<Link to="/login">login</Link>&ensp;first </p><b onClick={this.closeWarning}>&#10005;</b></div>
 										<button className="park_review_btn">WRITE A REVIEW</button>
 									</div>

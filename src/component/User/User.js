@@ -48,7 +48,6 @@ export default class User extends Component {
 
   //state code as property to pass to the notification page: 0 for server error, 1 for mail server error/info
   handleSignUpSubmit(event) {
-    const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
     if(this.verify()){
       fetch("/user/signup", {
         method:'POST',
@@ -74,7 +73,7 @@ export default class User extends Component {
       })
       .catch((err) => {
         console.log(err);
-        this.setState({redirect:true, notif_msg: SERVER_ERR_MSG, state:0, redirect_path: '/notification'});
+        this.setState({redirect:true, notif_msg: utils.SERVER_ERR_MSG, state:0, redirect_path: '/notification'});
       });
     }
 
@@ -82,7 +81,6 @@ export default class User extends Component {
   }
 
   handleLoginSubmit(event) {
-    const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
     if(this.verify()){
       fetch("/user/login", {
         method:'POST',
@@ -113,7 +111,7 @@ export default class User extends Component {
       })
       .catch((err) => {
         console.log(err);
-        this.setState({redirect:true, notif_msg: SERVER_ERR_MSG, state: 0, redirect_path: '/notification'});
+        this.setState({redirect:true, notif_msg: utils.SERVER_ERR_MSG, state: 0, redirect_path: '/notification'});
       });
     }
     event.preventDefault();

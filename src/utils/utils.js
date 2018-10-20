@@ -1,3 +1,5 @@
+const SERVER_ERR_MSG = "Oops, it seems that we have some troubles for our server";
+    
 function setCookie(key, obj) {
 	if(!key){
 		console.err("Key is missing");
@@ -97,7 +99,8 @@ var utils = {
 	npEliminate,
 	dayTransform,
 	judgeValidDate,
-	parseLatLon
+	parseLatLon,
+	SERVER_ERR_MSG
 };
 
 module.exports = utils;
