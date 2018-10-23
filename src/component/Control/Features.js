@@ -89,7 +89,7 @@ export default class Features extends Component {
     return (
       <div>
         {this.renderRedirect()}
-        <div className="wrapper">
+        <div className="features_wrapper">
           <SearchBox searchChange={this.search} qualified={this.state.qualified}/>
           <div className="ranking_wrapper">{
               parks !== undefined &&

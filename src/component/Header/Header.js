@@ -4,18 +4,54 @@ import './Header.css';
 import logo from './logo.png';
 import utils from '../../utils/utils';
 
-export default class Header extends Component{
+
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  grow: {
+    flexGrow: 1,
+  },
+  menuButton: {
+    marginLeft: -12,
+    marginRight: 20,
+  },
+  logo:{
+  	height:50,
+  	width:50
+  },
+  avatar: {
+  	height:'50px',
+  	width:'50px',
+  	borderRadius: '100%',
+	objectFit: 'cover'
+  },
+  menuItem: {
+  	paddingTop: '5px',
+  	paddingBottom: '5px'
+  }
+};
+
+class Header extends Component{
 	constructor(props){
 		super(props);
 		this.state = {
 			initial: true,
 			hasSession: false,
 			profile_img: "default.svg",
-			toggle: false
+			toggle: false,
+			anchorEl: null
 		};
-		this.checkSession = this.checkSession.bind(this);
-		this.importAll = this.importAll.bind(this);
-		this.toggleAvantar = this.toggleAvantar.bind(this);
 	};
 
 	componentDidMount(){
@@ -62,62 +98,96 @@ export default class Header extends Component{
 		}
 	}
 
-	importAll = (r) => {
-	    let images = {};
-	    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-	    return images;
-	}
+	handleChange = event => {
+	    this.setState({ auth: event.target.checked });
+	};
 
-	toggleAvantar = () => {
-		this.setState({toggle: !this.state.toggle});
-	}
+  	handleMenu = event => {
+		this.setState({ anchorEl: event.currentTarget });
+	};
+
+  	handleClose = () => {
+    	this.setState({ anchorEl: null });
+  	};
+
 
 	render(){
-		var login_style, avantar_style, dropdown_style;
+		
+		const { classes } = this.props;
+	    const { hasSession, anchorEl } = this.state;
+	    const open = Boolean(anchorEl);
 
-		const images = this.importAll(require.context('../../../public/img/avantar', false));
+		const images = utils.importAll(require.context('../../../public/img/avantar', false));
 
-		if(this.state.profile_img ){
-			console.log(this.state.profile_img);
-		}
-		if(this.state.hasSession){
-			login_style = {display: "none"}
-			avantar_style = {display: "inline-block"}
-		}
-		else{
-			avantar_style = {display: "none"}
-			login_style = {display: "inline-block"}
-		}
-
-		if(this.state.toggle && this.state.hasSession){
-			dropdown_style = {display: "block"};
-		}
-		else{
-			dropdown_style = {display: "none"};
-		}
-
+		const HomeLink = props => <Link to="/" {...props} />
+		const LoginLink = props => <Link to="/login" {...props} />
+		const ProfileLink = props => <Link to="/profile" {...props} />
+		const LogoutLink = props => <Link to="/logout" {...props} />
+		
 		return (
 			<div>
 				{!this.state.initial && 
-					<div className="nav">
-						<div className="logo">
-							<Link to="/"><img src={logo} alt="logo"/></Link>
-						</div>
-						<h3>NATIONAL PARK FINDER</h3>
-						<button className="btn" style={login_style}><Link to="/login">Sign In</Link></button>
-						<span className="avantar_wrapper" style={avantar_style}>
-							<img src={images[this.state.profile_img]} alt="avantar" className="avantar" onClick={this.toggleAvantar}/>
-						</span>
-						<div className="dropdown_div" style={dropdown_style}>
-							<div className="dropdown_wrapper">
-								<div className="dropdown_box"><Link to="/profile" onClick={this.toggleAvantar}>My Profile</Link></div>
-								<div className="dropdown_box"><Link to="/logout" onClick={this.toggleAvantar}>Log out</Link></div>
-							</div>
-						</div>
-					</div>
+					<div className={classes.root}>
+				        <AppBar position="fixed" style={{backgroundColor:'#0d3752'}}>
+				          <Toolbar>
+				            <IconButton className={classes.menuButton} 
+				            			color="inherit" 
+				            			aria-label="Menu" 
+				            			component={HomeLink}>
+				            	<img src={logo} className={classes.logo} alt="logo"/>
+				            </IconButton>
+				            <Typography variant="h6" color="inherit" className={classes.grow}>
+				              National Park Finder
+				            </Typography>
+				            {!hasSession && (
+				            	<Button color="inherit" component={LoginLink}>Login</Button>
+				            )}
+				            {hasSession && (
+				              <div>
+				                <IconButton
+				                  aria-owns={open ? 'menu-appbar' : null}
+				                  aria-haspopup="true"
+				                  onClick={this.handleMenu}
+				                  color="inherit"
+				                >
+				                  <img src={images[this.state.profile_img]} className={classes.avatar} alt="avatar"/>
+				                </IconButton>
+				                <Menu
+				                  id="menu-appbar"
+				                  anchorEl={anchorEl}
+				                  getContentAnchorEl={null}
+				                  anchorOrigin={{
+				                    vertical: 'bottom',
+				                    horizontal: 'center',
+				                  }}
+				                  transformOrigin={{
+				                    vertical: -5,
+				                    horizontal: 'center',
+				                  }}
+				                  open={open}
+				                  onClose={this.handleClose}
+				                >
+				                  <MenuItem onClick={this.handleClose} 
+				                  			className={classes.menuItem}
+			                  				component={ProfileLink}>Profile</MenuItem>
+				                  <MenuItem onClick={this.handleClose} 
+				                  			className={classes.menuItem}
+				                  			component={LogoutLink}>Logout</MenuItem>
+				                </Menu>
+				              </div>
+				            )}
+				          </Toolbar>
+				        </AppBar>
+				      </div>
 				}
 				{this.props.children}
 			</div>
 		);
 	}
 }
+
+Header.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Header);

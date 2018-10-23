@@ -2,6 +2,12 @@ import React, {Component} from 'react';
 import {Link} from "react-router-dom";
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
+//material ui import
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 import utils from "../../utils/utils";
 
@@ -12,8 +18,41 @@ import review_icon from './review.svg';
 import plus from './plus.svg';
 import checked from '../Park/checked.svg';
 
+const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    padding: '40px 20px'
+  },
+  wrapper: {
+    maxWidth: 1200,
+    margin: 'auto',
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
+});
 
-export default class Profile extends Component{
+const theme = createMuiTheme({
+  breakpoints: {
+    // Define custom breakpoint values.
+    // These will apply to Material-UI components that use responsive
+    // breakpoints, such as `Grid` and `Hidden`. You can also use the
+    // theme breakpoint functions `up`, `down`, and `between` to create
+    // media queries for these breakpoints
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1600
+    }
+  }
+});
+
+
+class Profile extends Component{
 	constructor(props) {
 	    super(props);
 	    this.state = {
@@ -173,6 +212,8 @@ export default class Profile extends Component{
 	render(){
 		const accept_note = "<b>Accept:</b><br/>1. Only images with name of extension as following: .jpg, .jpeg, .bmp, .svg, .png;<br/>2. Less than 2 MB";
 
+		const { classes } = this.props;
+
 		var avantar, preview_avantar;
 		var images;
 		var username;
@@ -214,82 +255,104 @@ export default class Profile extends Component{
 			<div>
 				{!this.state.initial && this.renderRedirect()}
 				{!this.state.initial && !this.state.redirect &&
-					<div>
+					<div className="profile_page_wrapper">
 						<div className={this.state.notif_window == 0 ? "notif_window notif_window0" : (this.state.notif_window == 1 ? "notif_window notif_window1" : "notif_window notif_window2")}>
 							<img src={checked} className="notif_checked"/>Unwatch successfully
 						</div>
-						<div className="profile_bng">
-							<div className="profile_wrapper">
-								<div className="side_box">
-									<div className="box personal_info_box">
-										<h3>Person Info</h3>
-										<div className="avantar_box">
-											<img src={avantar} className="avantar"></img>
-										</div>
-										<div className="row"><h4>{this.state.user.email}</h4></div>
-										<div className="row"><h4>{username}</h4></div>
-										<div className="edit_btn_container"><h4 onClick={this.editBoxToggle}>Edit Profile</h4></div>
-									</div>
-									<div className="box contribution_box">
-										<h3>Contribution</h3>
-										<div className="row"><img src={photo_icon}/><h4 className="contribution_num">{this.state.user.contribution_img}</h4></div>
-										<div className="row"><img src={review_icon}/><h4 className="contribution_num">{this.state.user.contribution_review}</h4></div>
-									</div>
-								</div>
-								<div className="box content_box">
-									<h3>Watch List</h3>
-									{
-										!this.state.watchList.length && 
-										<h2>Your watch list is empty</h2>
-									}
-									{
-										
-										this.state.watchList.map(function(park, i){
-											return <div key={i} className="watchlist_wrapper">
-												<p>{park.name}</p>
-												{
-													<div className="states_board">{
-														park.states.split(",").map(function(state, ii){
-															return <Link key={ii} to="/">{state}</Link>
-														})
-													}
-													</div>
-												}
-												<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
+						<MuiThemeProvider theme={theme}>
+							<div className={classes.root}>
+								<div className={classes.wrapper}>
+							      <Grid container spacing={16}>
+							        <Grid item xs={12} md={4} lg={3}>
+							        	<div className="side_box">
+											<div className="box personal_info_box">
+												<h3>Personal Info</h3>
+												<div className="avantar_box">
+													<img src={avantar} className="avantar"></img>
+												</div>
+												<div className="row"><h4>{this.state.user.email}</h4></div>
+												<div className="row"><h4>{username}</h4></div>
+												<div className="edit_btn_container"><h4 onClick={this.editBoxToggle}>Edit Profile</h4></div>
 											</div>
-										}, this)
-									}
-								</div>
+											<div className="box contribution_box">
+												<h3>Contribution</h3>
+												<div className="row"><img src={photo_icon}/><h4 className="contribution_num">{this.state.user.contribution_img}</h4></div>
+												<div className="row"><img src={review_icon}/><h4 className="contribution_num">{this.state.user.contribution_review}</h4></div>
+											</div>
+										</div>
+							        </Grid>
+							        <Grid item xs={12} md={8} lg={9}>
+							          <div className="box content_box">
+											<h3>Watch List</h3>
+											{
+												!this.state.watchList.length && 
+												<h2>Your watch list is empty</h2>
+											}
+											{
+												
+												this.state.watchList.map(function(park, i){
+													return <div key={i} className="watchlist_wrapper">
+														<p>{park.name}</p>
+														{
+															<div className="states_board">{
+																park.states.split(",").map(function(state, ii){
+																	return <Link key={ii} to="/">{state}</Link>
+																})
+															}
+															</div>
+														}
+														<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
+													</div>
+												}, this)
+											}
+										</div>
+							        </Grid>
+							      </Grid>
+							    </div>
+						    </div>
+						    <div className="mask bng_mask" style={bng_style}>
 							</div>
-							<div className="mask bng_mask" style={bng_style}>
-							</div>
-							<div className="edit_box" style={edit_box_show}>
-								<div className="edit_area">
-									<div className="flex_box avantar_area">
-										<img src={preview_avantar} className="preview_avantar"></img>
-										<label htmlFor="upload" className="mask upload_mask"><img src={plus}></img></label>
-										<input type="file" id="upload" accept=".jpg, .png, .jpeg, .svg, .bmp|images/*" onChange={this.fileChangeHandler}/>
-										<p className="warning">{this.state.error_msg}</p>
-										<p className="note" dangerouslySetInnerHTML={{__html: accept_note}}></p>
+							<div className="edit_box_wrapper">
+								<div className="edit_box" style={edit_box_show}>
+									<div className="edit_area">
+										<Grid container spacing={8}>
+								        	<Grid item xs={12} md={6}>
+								        	<div className="flex_box avantar_area">
+												<img src={preview_avantar} className="preview_avantar"></img>
+												<label htmlFor="upload" className="mask upload_mask"><img src={plus}></img></label>
+												<input type="file" id="upload" accept=".jpg, .png, .jpeg, .svg, .bmp|images/*" onChange={this.fileChangeHandler}/>
+												<p className="warning">{this.state.error_msg}</p>
+												<p className="note" dangerouslySetInnerHTML={{__html: accept_note}}></p>
+											</div>
+											</Grid>
+								        	<Grid item xs={12} md={6}>
+											<div className="flex_box info_area">
+												<label>Username</label>
+												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
+												<label>Username</label>
+												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
+												<label>Username</label>
+												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
+											</div>
+											</Grid>
+										</Grid>
 									</div>
-									<div className="flex_box info_area">
-										<label>Username</label>
-										<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
-										<label>Username</label>
-										<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
-										<label>Username</label>
-										<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
+									<div className="console_area">
+										<button className="btn cancel" onClick={this.editBoxToggle}>Cancel</button>
+										<button className="btn save" onClick={this.submitHandler}>Save</button>
 									</div>
 								</div>
-								<div className="console_area">
-									<button className="btn cancel" onClick={this.editBoxToggle}>Cancel</button>
-									<button className="btn save" onClick={this.submitHandler}>Save</button>
-								</div>
 							</div>
-						</div>
+						</MuiThemeProvider>
 					</div>
 				}
 			</div>
 		)
 	}
 }
+
+Profile.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(Profile);
