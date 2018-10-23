@@ -80,6 +80,15 @@ function dayTransform(obj){
 	return res;
 }
 
+function findAndDelete(parks, code){
+	for(let i = 0;i < parks.length;i++){
+		if(parks[i].code == code){
+			parks.splice(i, 1);
+			return parks;
+		}
+	}
+}
+
 function judgeValidDate(date){
 	return Date.parse(date) - Date.now() > 0 ;
 }
@@ -100,6 +109,7 @@ var utils = {
 	dayTransform,
 	judgeValidDate,
 	parseLatLon,
+	findAndDelete,
 	SERVER_ERR_MSG
 };
 

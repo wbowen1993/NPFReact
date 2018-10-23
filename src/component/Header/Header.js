@@ -103,8 +103,8 @@ export default class Header extends Component{
 						<div className="logo">
 							<Link to="/"><img src={logo} alt="logo"/></Link>
 						</div>
-						<h3>National Park Finder</h3>
-						<button className="btn" style={login_style}><Link to="/login">Log In</Link></button>
+						<h3>NATIONAL PARK FINDER</h3>
+						<button className="btn" style={login_style}><Link to="/login">Sign In</Link></button>
 						<span className="avantar_wrapper" style={avantar_style}>
 							<img src={images[this.state.profile_img]} alt="avantar" className="avantar" onClick={this.toggleAvantar}/>
 						</span>

@@ -8,7 +8,7 @@ class Home extends Component{
     return (
       <div className="homeWrapper">
         <div className="head">
-          <h1>&#10095;&#10095;&#10095; FIND YOUR PARK &#10094;&#10094;&#10094;</h1>
+          <h1>FIND YOUR PARK</h1>
         </div>
         <div id="box">
           <Link to="/features" className="links">EXLORER MORE</Link>

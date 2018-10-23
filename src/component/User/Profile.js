@@ -10,6 +10,7 @@ import './Profile.css';
 import photo_icon from './photo.svg';
 import review_icon from './review.svg';
 import plus from './plus.svg';
+import checked from '../Park/checked.svg';
 
 
 export default class Profile extends Component{
@@ -25,15 +26,16 @@ export default class Profile extends Component{
 	      uploadFile: null,
 	      imagePreviewUrl: null,
 	      redirect_path: '',
-	      error_msg: ''
+	      error_msg: '',
+	      notif_window: 0
 	    };
 
 	    this.renderRedirect = this.renderRedirect.bind(this);
-	    this.importAll = this.importAll.bind(this);
 	    this.editBoxToggle = this.editBoxToggle.bind(this);
 	    this.onChangeHandler = this.onChangeHandler.bind(this);
 	    this.fileChangeHandler = this.fileChangeHandler.bind(this);
 	    this.submitHandler = this.submitHandler.bind(this);
+	    this.unwatchHandler = this.unwatchHandler.bind(this);
 	}
 
 	componentDidMount(){
@@ -50,7 +52,7 @@ export default class Profile extends Component{
 			}
 			else if(res.state === 2){
 			  //3 for session issue
-			  console.log(res.watchList);
+			  // console.log(res.watchList);
 			  this.setState({redirect:false, user:res.info, username:res.info.username, watchList: res.watchList, username_input: res.info.username, imagePreviewUrl: res.info.profile_img});
 			}
 			this.setState({initial:false});
@@ -63,12 +65,11 @@ export default class Profile extends Component{
 
 	renderRedirect = () => {
 
-		const SERVER_ERR = "Server Error, please try later";
 		if(this.state.redirect){
 			if(this.state.redirect_path == "/login")
 				return <Redirect to={{pathname:"/login"}} />
 			else
-				return <Redirect to={{pathname:this.state.redirect_path, msg: SERVER_ERR, state: 0}} />  
+				return <Redirect to={{pathname:this.state.redirect_path, msg: utils.SERVER_ERR_MSG, state: 0}} />  
 		}
 	}
 
@@ -137,10 +138,36 @@ export default class Profile extends Component{
     	});
 	}
 
-	importAll = (r) => {
-	    let images = {};
-	    r.keys().map((item, index) => { images[item.replace('./', '')] = r(item); });
-	    return images;
+	unwatchHandler(e){
+		let code = e.target.id;
+		fetch('/parks/' + code + "/watch", {
+				method:'POST',
+				headers:{'Content-Type': 'application/json'},  
+			})
+			.then((res) => {
+				return res.json();
+			})
+			.then((res) => {
+				if(res.state === 2){
+					this.setState({watchList: utils.findAndDelete(this.state.watchList, code)});
+					const temp = this.state.notif_window;
+					if(temp == 0)
+						this.setState({notif_window: 1});
+					else if(temp == 1)
+						this.setState({notif_window: 2});
+					else
+						this.setState({notif_window: 1});
+				}
+				else if(res.state === -1){
+					this.setState({redirect:true, redirect_path: "/login"});
+				}
+				else{
+					this.setState({redirect:true});
+				}
+			})
+			.catch((err) => {
+				this.setState({redirect:true});
+			});
 	}
 
 	render(){
@@ -151,7 +178,7 @@ export default class Profile extends Component{
 		var username;
 		var edit_box_show, bng_style;
 		if(!this.state.redirect){
-			images = this.importAll(require.context('../../../public/img/avantar', false));
+			images = utils.importAll(require.context('../../../public/img/avantar', false));
 			if(this.state.user.profile_img != ''){
 				avantar = images[this.state.user.profile_img];
 			}
@@ -185,9 +212,12 @@ export default class Profile extends Component{
 		}
 		return (
 			<div>
-				<div>
-					{!this.state.initial && this.renderRedirect()}
-					{!this.state.initial && !this.state.redirect &&
+				{!this.state.initial && this.renderRedirect()}
+				{!this.state.initial && !this.state.redirect &&
+					<div>
+						<div className={this.state.notif_window == 0 ? "notif_window notif_window0" : (this.state.notif_window == 1 ? "notif_window notif_window1" : "notif_window notif_window2")}>
+							<img src={checked} className="notif_checked"/>Unwatch successfully
+						</div>
 						<div className="profile_bng">
 							<div className="profile_wrapper">
 								<div className="side_box">
@@ -213,12 +243,21 @@ export default class Profile extends Component{
 										<h2>Your watch list is empty</h2>
 									}
 									{
-										this.state.watchList.map(function(e, i){
+										
+										this.state.watchList.map(function(park, i){
 											return <div key={i} className="watchlist_wrapper">
-												<p>{e.name}</p>
-												<button className="btn watch_btn">Unwatch</button>
+												<p>{park.name}</p>
+												{
+													<div className="states_board">{
+														park.states.split(",").map(function(state, ii){
+															return <Link key={ii} to="/">{state}</Link>
+														})
+													}
+													</div>
+												}
+												<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
 											</div>
-										})
+										}, this)
 									}
 								</div>
 							</div>
@@ -248,8 +287,8 @@ export default class Profile extends Component{
 								</div>
 							</div>
 						</div>
-					}
-				</div>
+					</div>
+				}
 			</div>
 		)
 	}
