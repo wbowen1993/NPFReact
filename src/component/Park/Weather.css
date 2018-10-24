@@ -28,14 +28,29 @@
 	font-size: 2.4em;
 }
 
-.weather_box:hover{
+/*.weather_box:hover{
 	box-shadow: 0px 0px 5px 0px #ccc;
 	background: #00bfff;
 	transform: scale(1.1) perspective(1000px) rotateY(20deg);
-}
+}*/
 
 .weather_box h4, .weather_box h5{
 	margin: 0;
+}
+
+@media (hover:hover) {
+	.weather_box:hover{
+		box-shadow: 0px 0px 5px 0px #ccc;
+		background: #00bfff;
+		transform: scale(1.1) perspective(1000px) rotateY(20deg);
+	}
+}
+
+@media (hover:none), (hover:on-demand) {
+	.weather_box:hover{
+		box-shadow: 0px 0px 5px 0px #ccc;
+		background: #00bfff;
+	}
 }
 
 .weather_date{

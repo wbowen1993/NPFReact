@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import { Redirect } from 'react-router-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
+import Grid from '@material-ui/core/Grid';
+
 import "./login.css";
 import Login from "./Login";
 import Signup from "./Signup";
@@ -215,10 +218,14 @@ export default class User extends Component {
             transitionAppearTimeout={500}
             transitionEnter={false}
             transitionLeave={false}>
-            <div className="login-board">
+            <Grid container justify="center">
+              <Grid item xs={11} sm={8} md={6} lg={4}>
+              <div className="login-board">
               {this.state.login_disp && <Login handlers={handlers} error={errorMsg}/>}
               {!this.state.login_disp && <Signup handlers={handlers} error={errorMsg}/>}
-            </div>
+              </div>
+            </Grid>
+            </Grid>
           </ReactCSSTransitionGroup>
         </div>
       </div>

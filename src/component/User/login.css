@@ -27,9 +27,6 @@
 
 .login-board{
 	z-index: 100;
-	width: 30%;
-	min-width: 320px;
-	max-width: 500px;
 	margin: auto;
 	position: relative;
 	z-index: 100;

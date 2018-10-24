@@ -98,10 +98,18 @@ button{
 }
 
 .park_wrapper{
+	padding: 40px 0px;
+}
+
+.park_content_wrapper{
+	padding: 40px 20px;
 	margin:auto;
-	margin-top:50px;
+	max-width: 1200px;
+}
+
+.park_info_content_wrapper{
+	margin:auto;
 	margin-bottom: 50px;
-	width: 70%;
 	display: flex;
 	flex-direction: column;
 }
@@ -193,10 +201,11 @@ button{
 	font-size: 1em;
 	outline:none;
 	font-weight: 900;
+	margin-top: 10px;
 }
 
-.park_user_area button:last-child{
-	margin-top:10px;
+.park_user_area button:first-child{
+	margin-top:0px;
 }
 
 .park_user_area .login_notif{
@@ -259,7 +268,6 @@ button{
 .content_option{
 	text-align: center;
 	padding:15px 0px;
-	width: 25%;
 	font-size: 1.3em;
 	font-weight: 900;
 	color: white;
@@ -365,4 +373,20 @@ button{
 	font-weight: lighter;
 }
 
+.review_pop_wrapper *{
+	color: #0d3752;
+}
+
+.review_pop_title{
+	background: #0d3752;
+}
+
+.review_pop_title *{
+	color: white !important;
+}
+
+.star{
+	width: 30px;
+	height: 30px;
+}
 

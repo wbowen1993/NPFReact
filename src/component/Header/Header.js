@@ -117,7 +117,7 @@ class Header extends Component{
 	    const { hasSession, anchorEl } = this.state;
 	    const open = Boolean(anchorEl);
 
-		const images = utils.importAll(require.context('../../../public/img/avantar', false));
+		const images = utils.importAll(require.context('../../../public/img/avatar', false));
 
 		const HomeLink = props => <Link to="/" {...props} />
 		const LoginLink = props => <Link to="/login" {...props} />

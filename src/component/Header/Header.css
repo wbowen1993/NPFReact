@@ -93,7 +93,7 @@ h3{
     background: rgba(66,66,66,0.3);
 }
 
-.avantar_wrapper{
+.avatar_wrapper{
 	/*height: 100%;*/
 	position: relative;
 	display: none;
@@ -104,11 +104,11 @@ h3{
 	border:2px solid white;
 	border-radius: 100%;
 }
-.avantar{
+.avatar{
 	border-radius: 100%;
 	object-fit: cover;
 }
-.nav .avantar{
+.nav .avatar{
 	position: absolute;
 	left:4px;
 	top:4px;

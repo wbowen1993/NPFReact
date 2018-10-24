@@ -5,7 +5,6 @@ import axios from 'axios';
 //material ui import
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
@@ -26,11 +25,6 @@ const styles = theme => ({
   wrapper: {
     maxWidth: 1200,
     margin: 'auto',
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
   },
 });
 
@@ -214,24 +208,24 @@ class Profile extends Component{
 
 		const { classes } = this.props;
 
-		var avantar, preview_avantar;
+		var avatar, preview_avatar;
 		var images;
 		var username;
 		var edit_box_show, bng_style;
 		if(!this.state.redirect){
-			images = utils.importAll(require.context('../../../public/img/avantar', false));
+			images = utils.importAll(require.context('../../../public/img/avatar', false));
 			if(this.state.user.profile_img != ''){
-				avantar = images[this.state.user.profile_img];
+				avatar = images[this.state.user.profile_img];
 			}
 			else{
-				avantar = images["default.svg"];
+				avatar = images["default.svg"];
 			}
 			if(this.state.imagePreviewUrl == null || this.state.imagePreviewUrl == '')
-				preview_avantar = images["default.svg"];
+				preview_avatar = images["default.svg"];
 			else if(this.state.imagePreviewUrl == this.state.user.profile_img)
-				preview_avantar = images[this.state.imagePreviewUrl];
+				preview_avatar = images[this.state.imagePreviewUrl];
 			else
-				preview_avantar = this.state.imagePreviewUrl;
+				preview_avatar = this.state.imagePreviewUrl;
 			if(this.state.user.username != ''){
 				username = this.state.user.username;
 			}
@@ -267,8 +261,8 @@ class Profile extends Component{
 							        	<div className="side_box">
 											<div className="box personal_info_box">
 												<h3>Personal Info</h3>
-												<div className="avantar_box">
-													<img src={avantar} className="avantar"></img>
+												<div className="avatar_box">
+													<img src={avatar} className="avatar"></img>
 												</div>
 												<div className="row"><h4>{this.state.user.email}</h4></div>
 												<div className="row"><h4>{username}</h4></div>
@@ -292,7 +286,7 @@ class Profile extends Component{
 												
 												this.state.watchList.map(function(park, i){
 													return <div key={i} className="watchlist_wrapper">
-														<p>{park.name}</p>
+														<p><Link to={"park/" + park.code}>{park.name}</Link></p>
 														{
 															<div className="states_board">{
 																park.states.split(",").map(function(state, ii){
@@ -317,8 +311,8 @@ class Profile extends Component{
 									<div className="edit_area">
 										<Grid container spacing={8}>
 								        	<Grid item xs={12} md={6}>
-								        	<div className="flex_box avantar_area">
-												<img src={preview_avantar} className="preview_avantar"></img>
+								        	<div className="flex_box avatar_area">
+												<img src={preview_avatar} className="preview_avatar"></img>
 												<label htmlFor="upload" className="mask upload_mask"><img src={plus}></img></label>
 												<input type="file" id="upload" accept=".jpg, .png, .jpeg, .svg, .bmp|images/*" onChange={this.fileChangeHandler}/>
 												<p className="warning">{this.state.error_msg}</p>

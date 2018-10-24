@@ -32,7 +32,7 @@
   font-weight: lighter;
 }
 
-.parkAvantar{
+.parkAvatar{
 /*  border-radius: 100%;
   margin: auto;
   margin-top: 20px;*/
@@ -59,7 +59,7 @@
   align-items: center;
 }
 
-.parkAvantar:hover .park_mask{
+.parkAvatar:hover .park_mask{
   display: flex;
 }
 

@@ -100,6 +100,11 @@ function parseLatLon(str){
 	return res;
 }
 
+function getParkCode(props){
+	const path = props.location.pathname;
+	return path.substring(path.lastIndexOf("/") + 1);
+}
+
 var utils = {
 	setCookie,
 	getCookie,
@@ -110,6 +115,7 @@ var utils = {
 	judgeValidDate,
 	parseLatLon,
 	findAndDelete,
+	getParkCode,
 	SERVER_ERR_MSG
 };
 

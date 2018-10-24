@@ -9,7 +9,7 @@ const ParkBox = function (props){
       <div className="parkInfo" style={style}>
         <h3>{props.index}</h3>
       </div>
-      <div className="parkAvantar">
+      <div className="parkAvatar">
         <img src={props.url} className="thumbnail" alt="logo"/>
         <Link to={"/park/" + props.code}>
           <div className="mask park_mask">
