@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {Link, Redirect} from "react-router-dom";
 import axios from 'axios';
+import ImageCompressor from 'image-compressor.js';
 
 import Rating from 'react-rating';
 
@@ -15,6 +16,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 import './Park.css';
 import caution from './caution.svg';
@@ -24,6 +31,10 @@ import checked from './checked.svg';
 import full from './star_full.svg';
 import empty from './star_empty.svg';
 import readonly from './star_readonly.svg';
+import upload_placeholder from './upload.svg';
+import cancel from './cancel.svg';
+import review from './review.svg';
+// import imgPlaceholder from './placeholder.jpg';
 
 import utils from '../../utils/utils';
 import Overview from './Overview';
@@ -40,6 +51,16 @@ const styles = theme => ({
 	},
 	review_content_text_warning:{
 		color: 'red'
+	},
+	titleBar: {
+		color: 'white',
+		height: 'initial',
+	    background:
+	      'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+	      'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+	},
+	icon:{
+		width: 10
 	}
 });
 
@@ -50,16 +71,18 @@ class Park extends Component{
 			initial: true,
 			hasSession: false,
 			watched: false,
-			reviewed: false,
 			showLoginWarning: false,
 			redirect: false,
 			menu:0,
 			notif_window: 0,
 			open: false,
-			review_content: {},
-			cur_review: {},
+			user_review: {},
+			editing_review: {},
+			all_reviews: [],
 			uploadFiles: null,
-			validate_notif:false
+			error_msg: [],
+			validate_notif:false,
+			imagePreviewUrl: []
 		};
 
 		this.addToWatch = this.addToWatch.bind(this);
@@ -70,6 +93,8 @@ class Park extends Component{
 		this.ratingChange = this.ratingChange.bind(this);
 		this.reviewChange = this.reviewChange.bind(this);
 		this.validate = this.validate.bind(this);
+		this.fileChangeHandler = this.fileChangeHandler.bind(this);
+		this.deleteImg = this.deleteImg.bind(this);
 	}
 
 	componentDidMount(){
@@ -86,7 +111,7 @@ class Park extends Component{
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
 		    	let latLon = [utils.parseLatLon(this.state.info.latLong).lat, utils.parseLatLon(this.state.info.latLong).lon];				
-		    	this.setState({latLon, campsites: res.campsites, watched: res.watched, review_content: res.review, cur_review: res.review});
+		    	this.setState({latLon, campsites: res.campsites, watched: res.watched, all_reviews: res.allReviews, user_review: res.review, editing_review: res.review});
 		    }
 	    })
 	    .catch((err) => {
@@ -182,7 +207,11 @@ class Park extends Component{
 
 	postReview = (e) => {
 		e.preventDefault();
-
+		//check for image upload part
+		if(this.state.error_msg.length){
+			return;
+		}
+		//check for rating
 		if(!this.validate()){
 			this.setState({validate_notif: true});
 			return;
@@ -193,43 +222,88 @@ class Park extends Component{
 
 		const code = utils.getParkCode(this.props);
 
-		this.setState({ open: false });
-
-		const formData = new FormData();
-		formData.append('rating', this.state.cur_review.rating);
-		formData.append('review', this.state.cur_review.review ? this.state.cur_review.review : "");
-		formData.append('images', this.state.uploadFiles);
-		
 		const config = {
             headers: {
                 'content-type': 'multipart/form-data'
             }
         };
+		
+		const formData = new FormData();
+		formData.append('rating', this.state.editing_review.rating);
+		formData.append('review', this.state.editing_review.review ? this.state.editing_review.review : "");
+		let count = 0;
+		if(this.state.uploadFiles && this.state.uploadFiles.length){
+			for(let file of this.state.uploadFiles){
+				let compressor = new ImageCompressor();
 
-        console.log(this.state.cur_review);
-		axios.post('/parks/' + code + "/review", formData, config)
-        .then((res) => {
-            if(res.data.state == 1){
-            	// console.log("Refresh");
-            	window.location.reload();
-            }
-            else if(res.data.state == 0){
-            	this.setState({error_msg: res.data.msg});
-            }
-            else if(res.data.state == -1){
-            	this.setState({redirect: true, redirect_path: "/login"})
-            }
-            else if(res.data.state == -2){
-            	console.log(res.data.msg);
-            }
-        }).catch((error) => {
-    		// console.err(error);
-    		this.setState({redirect: true, redirect_path: "/notification"});
-    	});
+				compressor.compress(file, {quality:0.6})
+				.then((result) => {
+					formData.append('images', result, result.name);
+					if(++count == this.state.uploadFiles.length){
+
+				        // console.log(this.state.editing_review);
+						axios.post('/parks/' + code + "/review", formData, config)
+				        .then((res) => {
+				            if(res.data.state == 1){
+				            	// console.log("Refresh");
+				            	this.setState({ open: false });
+				            	window.location.reload();
+				            }
+				            else if(res.data.state == 0){
+				            	this.setState({ open: false });
+					    		this.setState({redirect: true, redirect_path: "/notification"});
+				            }
+				            else if(res.data.state == -1){
+				            	this.setState({ open: false });
+				            	this.setState({redirect: true, redirect_path: "/login"})
+				            }
+				            else if(res.data.state == -2){
+				            	this.setState(previousState => ({error_msg: [...previousState.error_msg, res.data.msg]}));
+				            }
+				        }).catch((error) => {
+				    		// console.err(error);
+				    		this.setState({ open: false });
+				    		this.setState({redirect: true, redirect_path: "/notification"});
+				    	});
+					}
+				})
+				.catch((err) => {
+					this.setState(previousState => ({error_msg: [...previousState.error_msg,"Error for " + file.name]}));
+				});
+			}
+		}
+		else{
+	        // console.log(this.state.editing_review);
+			axios.post('/parks/' + code + "/review", formData, config)
+	        .then((res) => {
+	            if(res.data.state == 1){
+	            	// console.log("Refresh");
+	            	this.setState({ open: false });
+	            	window.location.reload();
+	            }
+	            else if(res.data.state == 0){
+	            	this.setState({ open: false });
+		    		this.setState({redirect: true, redirect_path: "/notification"});
+	            }
+	            else if(res.data.state == -1){
+	            	this.setState({ open: false });
+	            	this.setState({redirect: true, redirect_path: "/login"})
+	            }
+	            else if(res.data.state == -2){
+	            	this.setState(previousState => ({error_msg: [...previousState.error_msg, res.data.msg]}));
+	            }
+	        }).catch((error) => {
+	    		// console.err(error);
+	    		this.setState({ open: false });
+	    		this.setState({redirect: true, redirect_path: "/notification"});
+	    	});
+		}
+		
+		
 	}
 
 	validate(){
-		if(this.state.cur_review.rating)
+		if(this.state.editing_review.rating)
 			return true;
 		return false;
 	}
@@ -248,8 +322,7 @@ class Park extends Component{
 
 
 	handleClose = () => {
-		console.log(this.state.review_content);
-	    this.setState({ open: false, cur_review: this.state.review_content, validate_notif: false});
+	    this.setState({ open: false, editing_review: this.state.user_review, validate_notif: false, error_msg: [], imagePreviewUrl: []});
 	};
 
 	closeWarning = () => {
@@ -258,15 +331,66 @@ class Park extends Component{
 		}
 	}
 
+	fileChangeHandler(e){
+		console.log(e.target.files);
+		if(e.target.files.length > 10){
+			this.setState(previousState => ({error_msg: [...previousState.error_msg,"Too many files"]}));
+			return;
+		}
+	    let files = e.target.files;
+	    let previewUrls = [];
+	    let uploadFiles = [];
+
+	    if(files && files != undefined){
+	    	this.setState({error_msg: []});
+	    	// this.setState({imagePreviewUrl: new Array(files.length).fill({url: imgPlaceholder, name: "uknown"})});
+	    	for(let i = 0;i < files.length;i++){
+	    		if(files[i].size > 10 * 1024 * 1024){
+	    			this.setState(previousState => ({error_msg: [...previousState.error_msg,"Too large for " + files[i].name]}));
+	    		}
+    			let reader = new FileReader();  
+		        reader.onload = ((file) => { 
+		        	return (event) => {
+		        		previewUrls.push({url:event.target.result, name: file.name});
+		        		uploadFiles.push(file);
+				        if(previewUrls.length == files.length){
+				        	this.setState({
+				    			uploadFiles,
+						        imagePreviewUrl: previewUrls
+				    		});
+				        }
+
+		        	}
+		        })(files[i]);
+		        reader.readAsDataURL(files[i]);
+		    }
+	    }
+	}
+
+	deleteImg = (e) => {
+		let index = e.target.id.substr(e.target.id.indexOf("-") + 1);
+		// console.log(e.target.id);
+		let previewImgs = this.state.imagePreviewUrl;
+		previewImgs.splice(index, 1);
+		let files = this.state.uploadFiles;
+		files.splice(index, 1);
+		this.setState({error_msg: []});
+		for(let i = 0;i < files.length;i++){
+			if(files[i].size > 10 * 1024 * 1024){
+				this.setState(previousState => ({error_msg: [...previousState.error_msg,"Too large for " + files[i].name]}));
+			}
+		}
+		console.log(files);
+		this.setState({imagePreviewUrl: previewImgs, uploadFiles: files});
+	}
+
 	ratingChange = (value) => {
-		// let review = this.state.cur_review;
-		// review.rating = value;
-		this.setState({cur_review: {rating: value, review: this.state.cur_review.review ? this.state.cur_review.review : ""}});
+		this.setState({editing_review: {rating: value, review: this.state.editing_review.review ? this.state.editing_review.review : ""}});
 	}
 
 	reviewChange = (e) => {
 		e.preventDefault();
-		this.setState({cur_review: {rating: this.state.cur_review.rating ? this.state.cur_review.rating : 0, review: e.target.value}});
+		this.setState({editing_review: {rating: this.state.editing_review.rating ? this.state.editing_review.rating : 0, review: e.target.value}});
 	}
 
 	selectMenu = (e) => {
@@ -281,7 +405,12 @@ class Park extends Component{
 
 
 	render(){
+
+		const accept_note = "<b>Accept:</b><br/>1. Only images with name of extension as following: .jpg, .jpeg, .png<br/>2. Less than 10 photos<br/>3. Less than 10MB for each photo";
+
 		const images = utils.importAll(require.context('../../../public/img/parks', false));
+
+		const review_photos = utils.importAll(require.context('../../../public/img/review'), false);
 
 		const { classes } = this.props;
 
@@ -308,9 +437,8 @@ class Park extends Component{
 				notif_content = "Unwatched successfully";
 			}
 
-			if(this.state.hasSession && this.state.reviewed){
+			if(this.state.hasSession && this.state.user_review.rating){
 				review_btn_content = "EDIT REVIEW";
-				notif_content = "Post successfully";
 			}
 			else{
 				review_btn_content = "WRITE A REVIEW";
@@ -429,52 +557,84 @@ class Park extends Component{
 												{this.state.menu == 2 && <Campsite parkLatLon={this.state.latLon} campsites={this.state.campsites} code={this.state.info.parkCode}/>}
 												{this.state.menu == 3 && <Gallery />}
 											</div>
+											{
+												this.state.all_reviews.length == 0 && 
+												<div className="review_borad_no_review">
+													<img src={review} id="review_icon"></img>
+													<h3>Be the first to write a review</h3>
+											    </div>
+											}
 										</div>
 									</Grid>
 								</Grid>
 								</div>
 							</div>
-							<Dialog
-					        	open={this.state.open}
-					        	onClose={this.handleClose}
-					        	aria-labelledby="form-dialog-title"
-					        	className="review_pop_wrapper"
-					        	fullWidth={true}
-					        	maxWidth={'sm'}
-					        >
-					          <DialogTitle id="form-dialog-title" className="review_pop_title">Review</DialogTitle>
-					          <DialogContent className={classes.review_pop_content_wrapper}>
-					          	<DialogContentText className={this.state.validate_notif ? classes.review_content_text_warning : classes.review_content_text}>
-					              Your overall rating on this park(required):
-					            </DialogContentText>
-					          	<Rating 
-					          		initialRating={this.state.cur_review.rating ? this.state.cur_review.rating : 0}
-					          		emptySymbol={<img src={empty} className="star" />}
-					          		fullSymbol={<img src={full} className="star" />}
-					          		onClick={this.ratingChange}
-				          		/>
-				          		<TextField
-						          id="outlined-multiline-flexible"
-						          label="Your review"
-						          multiline
-						          rowsMax="4"
-						          value={this.state.cur_review.review ? this.state.cur_review.review : ""}
-						          onChange={this.reviewChange}
-						          margin="normal"
-						          helperText="Write your review here"
-					              fullWidth
-					              autoFocus
-						          variant="outlined"
-						        />
-					          </DialogContent>
-					          <DialogActions>
-					            <Button onClick={this.handleClose} color="primary">
-					              Cancel
-					            </Button>
-					            <Button onClick={this.postReview} color="primary">
-					              Post
-					            </Button>
-					          </DialogActions>
+							<Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title" className="review_pop_wrapper" fullWidth={true} maxWidth={'sm'}>
+					        	<DialogTitle id="form-dialog-title" className="review_pop_title">Review</DialogTitle>
+					          	<DialogContent className={classes.review_pop_content_wrapper}>
+						          	<DialogContentText className={this.state.validate_notif ? classes.review_content_text_warning : classes.review_content_text}>
+						            	Your overall rating on this park(required):
+						            </DialogContentText>
+						          	<Rating 
+						          		initialRating={this.state.editing_review.rating ? this.state.editing_review.rating : 0}
+						          		emptySymbol={<img src={empty} className="star" />}
+						          		fullSymbol={<img src={full} className="star" />}
+						          		onClick={this.ratingChange}
+					          		/>
+					          		<TextField
+							          id="outlined-multiline-flexible"
+							          label="Your review"
+							          multiline
+							          rowsMax="4"
+							          value={this.state.editing_review.review ? this.state.editing_review.review : ""}
+							          onChange={this.reviewChange}
+							          margin="normal"
+							          helperText="Write your review here"
+						              fullWidth
+						              autoFocus
+							          variant="outlined"
+							        />
+							        <div className="upload_area">
+								        <div className="upload_control_area">
+								        	{
+								        		this.state.error_msg.map((e, i) => {
+											        return <p className="warning" key={i}>{e}</p>
+								        		})
+								        	}
+											<p className="note" dangerouslySetInnerHTML={{__html: accept_note}}></p>
+									        <label htmlFor="upload" className=""><img src={upload_placeholder}></img></label>
+											<input type="file" id="upload" accept=".jpg, .png, .jpeg|images/*" multiple onChange={this.fileChangeHandler}/>
+							          	</div>
+							          	<div className="upload_preview_area">
+							          	<GridList cellHeight={120} className={classes.gridList} cols={3}>
+									        {this.state.imagePreviewUrl.map(function(tile, i){
+									        	return <GridListTile key={i} cols={tile.cols || 1}>
+									            <img src={tile.url} className="preview_img"/>
+									            <GridListTileBar
+									              title={tile.name}
+									              titlePosition="top"
+									              actionIcon={
+									                <IconButton>
+									                	<img src={cancel} alt="cancel" className={classes.icon} onClick={this.deleteImg} id={"upload-" + i}/>
+									                </IconButton>
+									              }
+									              actionPosition="right"
+									              className={classes.titleBar + " titleBar"}
+									            />
+									          </GridListTile>
+									        }, this)}
+										</GridList>
+							          	</div>
+						          	</div>
+					          	</DialogContent>
+					          	<DialogActions>
+						            <Button onClick={this.handleClose} color="primary">
+						              Cancel
+						            </Button>
+						            <Button onClick={this.postReview} color="primary">
+						              Post
+						            </Button>
+					          	</DialogActions>
 					        </Dialog>
 						</div>
 					</div>

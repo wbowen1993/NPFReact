@@ -7,6 +7,14 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 
 import utils from "../../utils/utils";
 
@@ -26,6 +34,9 @@ const styles = theme => ({
     maxWidth: 1200,
     margin: 'auto',
   },
+  editbox_content_wrapper: {
+  	padding: '20px'
+  }
 });
 
 const theme = createMuiTheme({
@@ -52,7 +63,6 @@ class Profile extends Component{
 	    this.state = {
 	      initial: true,
 	      redirect: false,
-	      edit_box_show: false,
 	      user:'',
 	      username:'',
 	      username_input: '',
@@ -60,7 +70,8 @@ class Profile extends Component{
 	      imagePreviewUrl: null,
 	      redirect_path: '',
 	      error_msg: '',
-	      notif_window: 0
+	      notif_window: 0,
+	      open: false
 	    };
 
 	    this.renderRedirect = this.renderRedirect.bind(this);
@@ -69,6 +80,7 @@ class Profile extends Component{
 	    this.fileChangeHandler = this.fileChangeHandler.bind(this);
 	    this.submitHandler = this.submitHandler.bind(this);
 	    this.unwatchHandler = this.unwatchHandler.bind(this);
+	    this.handleClose = this.handleClose.bind(this);
 	}
 
 	componentDidMount(){
@@ -107,9 +119,7 @@ class Profile extends Component{
 	}
 
 	editBoxToggle = () => {
-		this.setState({edit_box_show: !this.state.edit_box_show});
-		this.setState({username_input: this.state.username, imagePreviewUrl: this.state.user.profile_img});
-		this.setState({error_msg: ""});
+		this.setState({open: true});
 	}
 
 	onChangeHandler(e){
@@ -171,6 +181,12 @@ class Profile extends Component{
     	});
 	}
 
+	handleClose = () => {
+	    this.setState({ open: false});
+	    this.setState({ username_input: this.state.username, imagePreviewUrl: this.state.user.profile_img});
+		this.setState({ error_msg: ""});
+	};
+
 	unwatchHandler(e){
 		let code = e.target.id;
 		fetch('/parks/' + code + "/watch", {
@@ -211,7 +227,6 @@ class Profile extends Component{
 		var avatar, preview_avatar;
 		var images;
 		var username;
-		var edit_box_show, bng_style;
 		if(!this.state.redirect){
 			images = utils.importAll(require.context('../../../public/img/avatar', false));
 			if(this.state.user.profile_img != ''){
@@ -231,18 +246,6 @@ class Profile extends Component{
 			}
 			else{
 				username = "Anonymous User";
-			}
-			if(this.state.edit_box_show){
-				edit_box_show = {"display": "block"};
-				bng_style = {
-					display:"block"
-				}
-			}
-			else{
-				edit_box_show = {"display": "none"};
-				bng_style = {
-					display:"none"
-				}
 			}
 		}
 		return (
@@ -304,39 +307,44 @@ class Profile extends Component{
 							      </Grid>
 							    </div>
 						    </div>
-						    <div className="mask bng_mask" style={bng_style}>
-							</div>
-							<div className="edit_box_wrapper">
-								<div className="edit_box" style={edit_box_show}>
-									<div className="edit_area">
-										<Grid container spacing={8}>
-								        	<Grid item xs={12} md={6}>
-								        	<div className="flex_box avatar_area">
+						    <Dialog
+					        	open={this.state.open}
+					        	onClose={this.handleClose}
+					        	aria-labelledby="form-dialog-title"
+					        	className={classes.editbox_wrapper}
+					        	fullWidth={true}
+					        	maxWidth={'sm'}
+					        >
+					        	<DialogTitle id="form-dialog-title" className="editbox_title">Personal Info</DialogTitle>
+					        	<DialogContent className={classes.editbox_content_wrapper}>
+					          		<Grid container spacing={8}>
+					          			<Grid item xs={12} sm={7}>
+								          	<div className="flex_box avatar_area">
 												<img src={preview_avatar} className="preview_avatar"></img>
 												<label htmlFor="upload" className="mask upload_mask"><img src={plus}></img></label>
 												<input type="file" id="upload" accept=".jpg, .png, .jpeg, .svg, .bmp|images/*" onChange={this.fileChangeHandler}/>
 												<p className="warning">{this.state.error_msg}</p>
 												<p className="note" dangerouslySetInnerHTML={{__html: accept_note}}></p>
 											</div>
-											</Grid>
-								        	<Grid item xs={12} md={6}>
-											<div className="flex_box info_area">
-												<label>Username</label>
-												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
-												<label>Username</label>
-												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
-												<label>Username</label>
-												<input type="text" value={this.state.username_input} className="input_box" name="username_input" onChange={this.onChangeHandler}/>
-											</div>
-											</Grid>
 										</Grid>
-									</div>
-									<div className="console_area">
-										<button className="btn cancel" onClick={this.editBoxToggle}>Cancel</button>
-										<button className="btn save" onClick={this.submitHandler}>Save</button>
-									</div>
-								</div>
-							</div>
+										<Grid item xs={12} sm={5}>
+								          	<TextField
+									          id="standard-name"
+									          label="Username"
+									          value={this.state.username_input}
+									          onChange={this.onChangeHandler}
+									          margin="normal"
+									          fullWidth
+									          variant="outlined"
+									        />
+						        		</Grid>
+						        	</Grid>
+					          	</DialogContent>
+					        	<DialogActions>
+					        		<Button onClick={this.handleClose} color="primary">Cancel</Button>
+					            	<Button onClick={this.submitHandler} color="primary">Confirm</Button>
+					        	</DialogActions>
+					        </Dialog>
 						</MuiThemeProvider>
 					</div>
 				}

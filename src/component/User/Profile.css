@@ -205,30 +205,6 @@
 	color: white;
 }
 
-.edit_box_wrapper{
-	width: 100%;
-}
-
-.edit_box{
-	font-family: 'Lato', sans-serif;
-	z-index: 1000;
-	background-color: white;
-	border-radius: 4px;
-	position: absolute;
-	top:150px;
-	width: auto;
-	left: 50%;
-	transform: translateX(-50%);
-	box-shadow: 0px 0px 5px 1px #555;
-}
-
-.edit_area{
-	display: flex;
-	flex-direction: row;
-	padding: 30px;
-	justify-content:space-around; 
-}
-
 .flex_box {
 	display: flex;
 	flex-direction: column;
@@ -287,64 +263,12 @@ input[type="file"]{
 	display: none;
 }
 
-/*.avatar_area img:hover ~.avatar_area::after{
-	display: block;
-}*/
-
-.info_area{
-	font-family: 'Lato', sans-serif;
-	font-weight: lighter;
+.editbox_title{
+	background: #0d3752;
 }
 
-.info_area input{
-	border:0;
-	border-bottom: 1px solid #aaa;
-	/*height:1.2em;*/
-	outline: none;
-	padding: 2px;
-	font-size: 1.2em;
-	caret-color:#000;
-	font-weight: lighter;
-	color:#000;
+.editbox_title *{
+	color: white!important;
 }
 
-.console_area{
-	position: relative;
-	width: 100%;
-}
-
-.console_area .btn{
-	color:white;
-	padding:12px;
-	width: 50%;
-	border-radius: 0;
-	border:none;
-	font-size:1.3em;
-	font-family: 'Lato', sans-serif;
-}
-
-.console_area .btn:first-child{
-	border-bottom-left-radius: 4px;
-}
-
-.console_area .btn:last-child{
-	border-bottom-right-radius: 4px;
-}
-
-.cancel{
-	background-color: #ea5a35;
-}
-
-.cancel:hover{
-	background-color: #ed6a49;
-}
-
-.save{
-	color:#3ac47b!important;
-	background-color: #063451;
-}
-
-.save:hover{
-	background-color: #0e4d75;
-}
 

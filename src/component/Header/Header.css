@@ -36,12 +36,6 @@ a{
 	
 }
 
-h3{
-	/*position: absolute;*/
-	display: flex;
-	align-items: center;
-	margin-left:2%;
-}
 .nav .btn{
 	position: relative;
 	z-index: 2;
