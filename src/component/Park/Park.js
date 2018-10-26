@@ -22,6 +22,10 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import CloseIcon from '@material-ui/icons/Close';
+
 
 import './Park.css';
 import caution from './caution.svg';
@@ -41,6 +45,7 @@ import Overview from './Overview';
 import Weather from './Weather';
 import Campsite from './Campsite';
 import Gallery from './Gallery';
+import ReviewCard from './ReviewCard';
 
 const styles = theme => ({
 	review_pop_content_wrapper:{
@@ -61,6 +66,12 @@ const styles = theme => ({
 	},
 	icon:{
 		width: 10
+	},
+	snackbar:{
+		background: '#ff6666'
+	},
+	link:{
+		textDecoration: 'underline'
 	}
 });
 
@@ -75,14 +86,15 @@ class Park extends Component{
 			redirect: false,
 			menu:0,
 			notif_window: 0,
-			open: false,
+			dialogOpen: false,
 			user_review: {},
 			editing_review: {},
 			all_reviews: [],
 			uploadFiles: null,
 			error_msg: [],
 			validate_notif:false,
-			imagePreviewUrl: []
+			imagePreviewUrl: [],
+			snackBarOpen: false
 		};
 
 		this.addToWatch = this.addToWatch.bind(this);
@@ -95,6 +107,7 @@ class Park extends Component{
 		this.validate = this.validate.bind(this);
 		this.fileChangeHandler = this.fileChangeHandler.bind(this);
 		this.deleteImg = this.deleteImg.bind(this);
+		this.vote = this.vote.bind(this);
 	}
 
 	componentDidMount(){
@@ -106,20 +119,28 @@ class Park extends Component{
 	    .then((res) => {
 	    	if(res.state == 1){
 	    		console.log(res.hasSession);
+	    		// console.log(res.allReviews);
+	    		// console.log(res.votes);
 	    		//[TODO]mock ranking
 	    		let ranking = 1 + Math.floor(Math.random() * 59);
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
 		    	let latLon = [utils.parseLatLon(this.state.info.latLong).lat, utils.parseLatLon(this.state.info.latLong).lon];				
-		    	this.setState({latLon, campsites: res.campsites, watched: res.watched, all_reviews: res.allReviews, user_review: res.review, editing_review: res.review});
+		    	this.setState({latLon, 
+		    		campsites: res.campsites, 
+		    		watched: res.watched, 
+		    		all_reviews: res.allReviews, 
+		    		user_review: res.review, 
+		    		votes: res.votes,
+		    		editing_review: res.review});
 		    }
 	    })
 	    .catch((err) => {
-	    	console.log(err);
+			this.setState({redirect: true, redirect_path: "/notification"});
 	    })
 	    .then(() => {
 	    	this.setState({initial: false});
-	    });
+	    })
 	}
 
 	alertsMap = (e, i) => {
@@ -193,14 +214,14 @@ class Park extends Component{
 						this.setState({notif_window: 1});
 				}
 				else if(res.state === -1){
-					this.setState({hasSession: false});
+	            	this.setState({redirect: true, redirect_path: "/login"})
 				}
 				else{
-					this.setState({redirect:true});
+					this.setState({redirect:true, redirect_path: "/notification"});
 				}
 			})
 			.catch((err) => {
-				this.setState({redirect:true});
+				this.setState({redirect: true, redirect_path: "/notification"});
 			});
 		}
 	}
@@ -246,15 +267,15 @@ class Park extends Component{
 				        .then((res) => {
 				            if(res.data.state == 1){
 				            	// console.log("Refresh");
-				            	this.setState({ open: false });
+				            	this.setState({ dialogOpen: false });
 				            	window.location.reload();
 				            }
 				            else if(res.data.state == 0){
-				            	this.setState({ open: false });
+				            	this.setState({ dialogOpen: false });
 					    		this.setState({redirect: true, redirect_path: "/notification"});
 				            }
 				            else if(res.data.state == -1){
-				            	this.setState({ open: false });
+				            	this.setState({ dialogOpen: false });
 				            	this.setState({redirect: true, redirect_path: "/login"})
 				            }
 				            else if(res.data.state == -2){
@@ -262,7 +283,7 @@ class Park extends Component{
 				            }
 				        }).catch((error) => {
 				    		// console.err(error);
-				    		this.setState({ open: false });
+				    		this.setState({ dialogOpen: false });
 				    		this.setState({redirect: true, redirect_path: "/notification"});
 				    	});
 					}
@@ -278,15 +299,15 @@ class Park extends Component{
 	        .then((res) => {
 	            if(res.data.state == 1){
 	            	// console.log("Refresh");
-	            	this.setState({ open: false });
+	            	this.setState({ dialogOpen: false });
 	            	window.location.reload();
 	            }
 	            else if(res.data.state == 0){
-	            	this.setState({ open: false });
+	            	this.setState({ dialogOpen: false });
 		    		this.setState({redirect: true, redirect_path: "/notification"});
 	            }
 	            else if(res.data.state == -1){
-	            	this.setState({ open: false });
+	            	this.setState({ dialogOpen: false });
 	            	this.setState({redirect: true, redirect_path: "/login"})
 	            }
 	            else if(res.data.state == -2){
@@ -294,12 +315,48 @@ class Park extends Component{
 	            }
 	        }).catch((error) => {
 	    		// console.err(error);
-	    		this.setState({ open: false });
+	    		this.setState({ dialogOpen: false });
 	    		this.setState({redirect: true, redirect_path: "/notification"});
 	    	});
 		}
 		
-		
+	}
+
+	vote(id){
+		const code = utils.getParkCode(this.props);
+		if(!this.state.hasSession){
+			this.setState({snackBarOpen: true});
+		}
+		else{
+			const review_id = id.substring(2);
+			const upvote = id[0] == 'u';
+
+			fetch('/parks/' + code + "/vote", {
+				method:'POST',
+				headers:{'Content-Type': 'application/json'}, 
+				body:JSON.stringify({
+		          	review_id, upvote
+		        }) 
+			})
+			.then((res) => {
+				return res.json();
+			})
+			.then((res) => {
+				if(res.state == 0){
+					this.setState({redirect: true, redirect_path: "/notification"});
+				}
+				else if(res.state == -1){
+					this.setState({redirect: true, redirect_path: "/login"});
+				}
+				else if(res.state == 1){
+					// console.log("success");
+					this.setState({all_reviews: res.all_reviews, votes: res.votes})
+				}
+			})
+			.catch((err) => {
+				this.setState({redirect: true, redirect_path: "/notification"});
+			});
+		}
 	}
 
 	validate(){
@@ -309,21 +366,25 @@ class Park extends Component{
 	}
 
 	reviewPop = () => {
-		// this.setState({ open: true });
+		// this.setState({ dialogOpen: true });
 		if(!this.state.hasSession){
 			if(!this.state.showLoginWarning){
 				this.setState({showLoginWarning: true});
 			}
 		}
 		else{
-			this.setState({showLoginWarning: false, open: true});
+			this.setState({showLoginWarning: false, dialogOpen: true});
 		}
 	}
 
 
-	handleClose = () => {
-	    this.setState({ open: false, editing_review: this.state.user_review, validate_notif: false, error_msg: [], imagePreviewUrl: []});
-	};
+	dialogClose = () => {
+	    this.setState({ dialogOpen: false, editing_review: this.state.user_review, validate_notif: false, error_msg: [], imagePreviewUrl: []});
+	}
+
+	snackBarClose = () => {
+		this.setState({ snackBarOpen: false });
+	}
 
 	closeWarning = () => {
 		if(this.state.showLoginWarning){
@@ -399,7 +460,8 @@ class Park extends Component{
 
 	renderRedirect = () => {
 		if(this.state.redirect){
-			return <Redirect to={{pathname:'/notification', msg: utils.SERVER_ERR_MSG, state: 0}} />  
+			let path = this.state.redirect_path;
+			return <Redirect to={{pathname:path, msg: utils.SERVER_ERR_MSG, state: 0}} />  
 		}
 	}
 
@@ -413,6 +475,8 @@ class Park extends Component{
 		const review_photos = utils.importAll(require.context('../../../public/img/review'), false);
 
 		const { classes } = this.props;
+
+		let votes = this.state.votes;
 
 		let banner_style, loginWarningStyle, watched;
 		let watched_btn_content, review_btn_content, notif_content;
@@ -559,17 +623,28 @@ class Park extends Component{
 											</div>
 											{
 												this.state.all_reviews.length == 0 && 
-												<div className="review_borad_no_review">
+												<div className="review_board_no_review">
 													<img src={review} id="review_icon"></img>
 													<h3>Be the first to write a review</h3>
 											    </div>
+											}
+											{
+												<div>{
+													this.state.all_reviews.map(function(review, i){
+														return <ReviewCard key={i} info={review} 
+														votes={votes[review._id] == undefined ? {} : votes[review._id]}
+														voteHandler={this.vote} 
+														/>
+													}, this)
+												}
+												</div>
 											}
 										</div>
 									</Grid>
 								</Grid>
 								</div>
 							</div>
-							<Dialog open={this.state.open} onClose={this.handleClose} aria-labelledby="form-dialog-title" className="review_pop_wrapper" fullWidth={true} maxWidth={'sm'}>
+							<Dialog open={this.state.dialogOpen} onClose={this.dialogClose} aria-labelledby="form-dialog-title" className="review_pop_wrapper" fullWidth={true} maxWidth={'sm'}>
 					        	<DialogTitle id="form-dialog-title" className="review_pop_title">Review</DialogTitle>
 					          	<DialogContent className={classes.review_pop_content_wrapper}>
 						          	<DialogContentText className={this.state.validate_notif ? classes.review_content_text_warning : classes.review_content_text}>
@@ -628,7 +703,7 @@ class Park extends Component{
 						          	</div>
 					          	</DialogContent>
 					          	<DialogActions>
-						            <Button onClick={this.handleClose} color="primary">
+						            <Button onClick={this.dialogClose} color="primary">
 						              Cancel
 						            </Button>
 						            <Button onClick={this.postReview} color="primary">
@@ -637,6 +712,32 @@ class Park extends Component{
 					          	</DialogActions>
 					        </Dialog>
 						</div>
+						<Snackbar
+							anchorOrigin={{
+								vertical: 'top',
+								horizontal: 'center',
+							}}
+							open={this.state.snackBarOpen}
+							autoHideDuration={5000}
+							onClose={this.snackBarClose}
+				        >
+				        <SnackbarContent
+				        	message={<span id="message-id">Please <Link to="/login" className={classes.link}>Login</Link> first</span>}
+				          	action={[
+					            <IconButton
+					            	key="close"
+					              	aria-label="Close"
+					              	color="inherit"
+					              	className={classes.close}
+					              	onClick={this.snackBarClose}
+					            >
+					              	<CloseIcon />
+					            </IconButton>,
+				          	]}
+				          	className={classes.snackbar}
+				          	>
+				        </SnackbarContent>
+				        </Snackbar>
 					</div>
 				}	
 			</div>

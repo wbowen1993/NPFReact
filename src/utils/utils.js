@@ -105,6 +105,26 @@ function getParkCode(props){
 	return path.substring(path.lastIndexOf("/") + 1);
 }
 
+function calcPostTime(time){
+	const now = Date.now();
+	const diff = (now - Date.parse(time)) / (3600 * 1000);
+	if(diff < 24){
+		return "Today";
+	}
+	else if(diff < 24 * 7){
+		return Math.ceil(diff / 24) + " days ago";
+	}
+	else if(diff < 24 * 30){
+		return "This month";
+	}
+	else if(diff < 24 * 365){
+		return Math.ceil(diff / (24 * 30)) + " months ago";
+	}
+	else{
+		return Math.floor(diff / (24 * 365)) + " year" + (Math.floor(diff / (24 * 365)) > 1 ? "s" : "") + " ago";
+	}
+}
+
 var utils = {
 	setCookie,
 	getCookie,
@@ -116,6 +136,7 @@ var utils = {
 	parseLatLon,
 	findAndDelete,
 	getParkCode,
+	calcPostTime,
 	SERVER_ERR_MSG
 };
 

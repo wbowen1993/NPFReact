@@ -60,7 +60,7 @@ class Header extends Component{
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		this.checkSession();
+		// this.checkSession();
 	}
 
 	checkSession = () => {
