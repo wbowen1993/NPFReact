@@ -1,0 +1,27 @@
+.rating_board {
+}
+.rating_board *{
+	color: #0d3752!important;
+}
+
+.rating_board h3{
+	font-size: 2.6em;
+	font-weight: lighter;
+	width: 100%;
+	text-align: center;
+	margin: 0;
+}
+
+.rating_board p{
+	font-size: 0.8em;
+	text-align: center;
+	margin: 0;
+	width: 100%;
+	color: #bbb !important;
+	font-style: italic;
+}
+
+.rating_board_star{
+	width: 20px;
+	height: 20px;
+}

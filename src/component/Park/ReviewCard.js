@@ -18,10 +18,12 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 
 import Rating from 'react-rating';
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css'; 
 
 import utils from '../../utils/utils';
 
-import full from './star_full.svg';
+import full from './star_readonly.svg';
 import empty from './star_empty.svg';
 import checked from './checked_review.svg';
 import crossed from './cancel_review.svg';
@@ -106,14 +108,19 @@ class ReviewCard extends Component{
 		}
 		this.enlargeImg = this.enlargeImg.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this.getDimension = this.getDimension.bind(this);
 	}
-	
+
 	enlargeImg(e){
 		this.setState({open: true, imgurl: e.target.src});
 	}
 
 	handleClose(){
 		this.setState({open: false});
+	}
+
+	getDimension({target:img}){
+		this.setState({imgAspectRatio: img.offsetWidth / img.offsetHeight});
 	}
 
 	render(){
@@ -124,6 +131,7 @@ class ReviewCard extends Component{
 		const review_imgs = utils.importAll(require.context('../../../public/img/review', false));
 		
 		const info = this.props.info;
+
 		return (
 			<div>
 				<Card className={classes.card}>
@@ -175,21 +183,12 @@ class ReviewCard extends Component{
 		        		</Button>
 			        </CardActions>
 		      	</Card>
-		      	<Dialog
-		          open={this.state.open}
-		          keepMounted
-		          onClose={this.handleClose}
-		          fullWidth={true} maxWidth={'md'}
-		        >
-		        	<DialogContent className={classes.enlargeContent}>
-		        	<div className={classes.paper}>
-			         	{	
-			         		this.state.imgurl != '' &&
-			         		<img src={this.state.imgurl} className="fullsize_img"/>
-			         	}
-			        </div>
-			        </DialogContent>
-		        </Dialog>
+		      	{this.state.open && (
+		        	<Lightbox
+		            mainSrc={this.state.imgurl}
+		            onCloseRequest={() => this.setState({ open: false })}
+		          />
+		        )}
 	      	</div>
 		)
 	}

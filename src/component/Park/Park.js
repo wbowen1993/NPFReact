@@ -8,6 +8,7 @@ import Rating from 'react-rating';
 //material ui import
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import classnames from 'classnames';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -21,7 +22,6 @@ import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CloseIcon from '@material-ui/icons/Close';
@@ -46,6 +46,7 @@ import Weather from './Weather';
 import Campsite from './Campsite';
 import Gallery from './Gallery';
 import ReviewCard from './ReviewCard';
+import RatingBoard from './RatingBoard';
 
 const styles = theme => ({
 	review_pop_content_wrapper:{
@@ -72,6 +73,18 @@ const styles = theme => ({
 	},
 	link:{
 		textDecoration: 'underline'
+	},
+	section:{
+		height: "100%"
+	},
+	ratingboard:{
+		height: "calc(100% - 20px)",
+		padding: 10,
+		border:'1px solid #ccc',
+		borderRadius: 5,
+		display:'flex',
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 });
 
@@ -82,7 +95,6 @@ class Park extends Component{
 			initial: true,
 			hasSession: false,
 			watched: false,
-			showLoginWarning: false,
 			redirect: false,
 			menu:0,
 			notif_window: 0,
@@ -90,6 +102,7 @@ class Park extends Component{
 			user_review: {},
 			editing_review: {},
 			all_reviews: [],
+			ratings: null,
 			uploadFiles: null,
 			error_msg: [],
 			validate_notif:false,
@@ -98,7 +111,6 @@ class Park extends Component{
 		};
 
 		this.addToWatch = this.addToWatch.bind(this);
-		this.closeWarning = this.closeWarning.bind(this);
 		this.selectMenu = this.selectMenu.bind(this);
 		this.reviewPop = this.reviewPop.bind(this);
 		this.postReview = this.postReview.bind(this);
@@ -132,6 +144,7 @@ class Park extends Component{
 		    		all_reviews: res.allReviews, 
 		    		user_review: res.review, 
 		    		votes: res.votes,
+		    		ratings: {avg: 4.5, count: 10, distribution:[60, 30, 0, 10, 0]},
 		    		editing_review: res.review});
 		    }
 	    })
@@ -177,12 +190,12 @@ class Park extends Component{
 
 	addToWatch = () => {
 		if(!this.state.hasSession){
-			if(!this.state.showLoginWarning){
-				this.setState({showLoginWarning: true});
+			if(!this.state.snackBarOpen){
+				this.setState({snackBarOpen: true});
 			}
 		}
 		else{
-			this.setState({showLoginWarning: false});
+			this.setState({snackBarOpen: false});
 			const path = this.props.location.pathname;
 			const code = path.substring(path.lastIndexOf("/") + 1);
 			fetch('/parks/' + code + "/watch", {
@@ -368,12 +381,12 @@ class Park extends Component{
 	reviewPop = () => {
 		// this.setState({ dialogOpen: true });
 		if(!this.state.hasSession){
-			if(!this.state.showLoginWarning){
-				this.setState({showLoginWarning: true});
+			if(!this.state.snackBarOpen){
+				this.setState({snackBarOpen: true});
 			}
 		}
 		else{
-			this.setState({showLoginWarning: false, dialogOpen: true});
+			this.setState({snackBarOpen: false, dialogOpen: true});
 		}
 	}
 
@@ -384,12 +397,6 @@ class Park extends Component{
 
 	snackBarClose = () => {
 		this.setState({ snackBarOpen: false });
-	}
-
-	closeWarning = () => {
-		if(this.state.showLoginWarning){
-			this.setState({showLoginWarning: false});
-		}
 	}
 
 	fileChangeHandler(e){
@@ -478,17 +485,12 @@ class Park extends Component{
 
 		let votes = this.state.votes;
 
-		let banner_style, loginWarningStyle, watched;
+		let banner_style, watched;
 		let watched_btn_content, review_btn_content, notif_content;
 		if(!this.state.initial){
 			let arr = [this.state.info];
 			let mapping = utils.match(arr, images);
 			banner_style = {backgroundImage:"url(" + encodeURI(mapping[this.state.info.name]) + ")"};
-
-			if(!this.state.showLoginWarning)
-				loginWarningStyle = {display: "none"};
-			else
-				loginWarningStyle = {display: "flex"};
 
 			if(this.state.hasSession && this.state.watched){
 				watched = {background: "#ec5f5f", color: "white"};
@@ -545,37 +547,48 @@ class Park extends Component{
 								<Grid container spacing={16} direction="row-reverse">
 							        <Grid item xs={12} md={3}>
 										<div className="park_right">
-											<Grid container spacing={8}>
-											    <Grid item xs={12} sm={8} md={12}>
-													<div className="ranking_board">
-														<h1>{this.state.ranking}</h1>
-													</div>
-													<div className="name_board">
-														<div className="states_board">
-															{
-																this.state.info.states.split(",").map(function(e, i){
-																	return <Link key={i} to="/">{e}</Link>
-																})
-															}
+											<Grid container spacing={8} justify="center" alignItems="stretch" direction="row">
+											    <Grid item xs={12} sm={this.state.ratings ? 4 : 9} md={12}>
+													<div className={classes.section}>
+														<div className="ranking_board">
+															<h1>{this.state.ranking}</h1>
 														</div>
-														<h4>{this.state.info.name}</h4>
+														<div className="name_board">
+															<div className="states_board">
+																{
+																	this.state.info.states.split(",").map(function(e, i){
+																		return <Link key={i} to="/">{e}</Link>
+																	})
+																}
+															</div>
+															<h4>{this.state.info.name}</h4>
+														</div>
 													</div>
 												</Grid>
-												<Grid item xs={12} sm={4} md={12}>
-													<div className="park_user_area">
-														<button className="park_fav_btn" onClick={this.addToWatch} style={watched}>
-														{watched_btn_content}
-														</button>
-														<button className="park_review_btn" onClick={this.reviewPop}>
-														{review_btn_content}
-														</button>
-														<div style={loginWarningStyle} className="login_notif"><p>Please&ensp;<Link to="/login">login</Link>&ensp;first </p><b onClick={this.closeWarning}>&#10005;</b></div>
+												{
+													this.state.ratings != null && 
+													<Grid item xs={12} sm={5} md={12}>
+														<div className={classnames(classes.section, classes.ratingboard)}>
+															<RatingBoard data={this.state.ratings}/>
 														</div>
-													<div className="link_area">
-														<a href={this.state.info.url}>Office Site(NPS)</a>
-														<a href={this.state.info.directionsUrl}>More Direction Info</a>
-													</div>
-													<div className="tag_area">
+													</Grid>
+												}
+												<Grid item xs={12} sm={3} md={12}>
+													<div className={classes.section}>
+														<div className="park_user_area">
+															<button className="park_fav_btn" onClick={this.addToWatch} style={watched}>
+															{watched_btn_content}
+															</button>
+															<button className="park_review_btn" onClick={this.reviewPop}>
+															{review_btn_content}
+															</button>
+														</div>
+														<div className="link_area">
+															<a href={this.state.info.url}>Office Site(NPS)</a>
+															<a href={this.state.info.directionsUrl}>More Direction Info</a>
+														</div>
+														<div className="tag_area">
+														</div>
 													</div>
 												</Grid>
 											</Grid>

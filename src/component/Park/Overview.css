@@ -35,11 +35,6 @@
 	margin: 0;
 }
 
-.acc_wrapper h3:last-child{
-	font-size: 1.6em;
-	cursor: pointer;
-}
-
 .plain_content{
 	padding: 15px;
 }
