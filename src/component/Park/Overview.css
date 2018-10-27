@@ -11,7 +11,6 @@
 }
 
 .overview_wrapper{
-	margin-top:10px;
 	width: 100%;
 	position: relative;
 }
@@ -23,12 +22,15 @@
 	color:white;
 	margin: 0;
 	cursor: pointer;
-	/*margin: 2px 0px;*/
 	margin-top: 8px;
 	background: #248f8f;
 	border-radius: 5px;
 	padding: 10px 20px;
 	box-shadow: 0px 6px 0px 0px #136c68;
+}
+
+.acc_wrapper:first-child .acc_nav_wrapper{
+	margin-top: 0;
 }
 
 .acc_wrapper h3{

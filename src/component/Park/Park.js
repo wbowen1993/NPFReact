@@ -632,11 +632,11 @@ class Park extends Component{
 												{this.state.menu == 0 && <Overview info={this.state.info}/>}
 												{this.state.menu == 1 && <Weather weather={this.state.weather}/>}
 												{this.state.menu == 2 && <Campsite parkLatLon={this.state.latLon} campsites={this.state.campsites} code={this.state.info.parkCode}/>}
-												{this.state.menu == 3 && <Gallery />}
+												{this.state.menu == 3 && <Gallery photos={[]}/>}
 											</div>
 											{
 												this.state.all_reviews.length == 0 && 
-												<div className="review_board_no_review">
+												<div className="empty_content">
 													<img src={review} id="review_icon"></img>
 													<h3>Be the first to write a review</h3>
 											    </div>
