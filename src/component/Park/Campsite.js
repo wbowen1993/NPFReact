@@ -50,6 +50,7 @@ export default class Campsite extends Component{
 		let allMarkers = [parkMarker];
 		for(let i = 0;i < this.props.campsites.length;i++){
 			if(this.props.campsites[i].latLon){
+				console.log(i);
 				let tempUrl = iconUrl + (i + 1).toString() + ".png";
 				let tempIcon = new campIcon({iconUrl: tempUrl});
 				allMarkers.push(L.marker(this.props.campsites[i].latLon, {icon: tempIcon}).addTo(this.map)); 
@@ -78,7 +79,7 @@ export default class Campsite extends Component{
 						return <div key={i} className="campsite_info_row">
 								<div className="campsite_index">{i + 1}</div>
 								<div className="info_wrapper campsite_info_wrapper">
-									<h4>{e.name.split(" ").map(function(e){e = e.toLowerCase(); return e[0].toUpperCase() + e.substring(1)}).join(" ")}</h4>
+									<h4>{e.name.trim().split(" ").map(function(word){console.log(word);word = word.toLowerCase(); return word[0].toUpperCase() + word.substring(1)}).join(" ")}</h4>
 									<div className="same_line">{e.phone.length > 10 && <h5>Contact: {e.phone}</h5>}
 									{e.reserveUrl.length > 10 && <a href={e.reserveUrl}>RESERVE HERE</a>}
 									<a href={e.more}>MORE INFO</a>

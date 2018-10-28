@@ -479,11 +479,15 @@ class Park extends Component{
 
 		const images = utils.importAll(require.context('../../../public/img/parks', false));
 
+		const avatars = utils.importAll(require.context('../../../public/img/avatar', false));
+
 		const review_photos = utils.importAll(require.context('../../../public/img/review'), false);
 
 		const { classes } = this.props;
 
 		let votes = this.state.votes;
+
+		let all_photos = [];
 
 		let banner_style, watched;
 		let watched_btn_content, review_btn_content, notif_content;
@@ -509,6 +513,14 @@ class Park extends Component{
 			else{
 				review_btn_content = "WRITE A REVIEW";
 			}
+
+			this.state.all_reviews.forEach((review) => {
+				review.related_images.forEach((photo) => {
+					all_photos.push({photo: review_photos[photo], 
+									avatar: avatars[review.userId.profile_img], 
+									username: review.userId.username});
+				});
+			});
 
 		}
 
@@ -632,7 +644,7 @@ class Park extends Component{
 												{this.state.menu == 0 && <Overview info={this.state.info}/>}
 												{this.state.menu == 1 && <Weather weather={this.state.weather}/>}
 												{this.state.menu == 2 && <Campsite parkLatLon={this.state.latLon} campsites={this.state.campsites} code={this.state.info.parkCode}/>}
-												{this.state.menu == 3 && <Gallery photos={[]}/>}
+												{this.state.menu == 3 && <Gallery photos={all_photos}/>}
 											</div>
 											{
 												this.state.all_reviews.length == 0 && 
