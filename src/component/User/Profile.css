@@ -73,6 +73,7 @@
 
 .content_box{
 	height: fit-content;
+	margin-bottom: 16px;
 }
 
 .content_box h2{
@@ -83,7 +84,7 @@
 
 .watchlist_wrapper{
 	padding: 10px 20px;
-	border-bottom: 1px solid #0d3752;
+	border-bottom: 1px solid #ccc;
 	display: flex;
 	justify-content: space-between;
 	/*font-size: 1em;*/
@@ -166,8 +167,6 @@
 
 .edit_btn_container h4{
 	padding: 10px;
-/*	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;*/
 	color:white;
 	background-image: linear-gradient(to right top, #19273d, #1f3452, #254167, #2a4e7e, #305c95);
 	cursor: pointer;
@@ -270,5 +269,45 @@ input[type="file"]{
 .editbox_title *{
 	color: white!important;
 }
+
+.profile_review_wrapper{
+	padding: 20px;
+	/*padding-top: 10px;*/
+	border-bottom: 1px solid #ccc;
+}
+
+.profile_review_wrapper:last-child{
+	border: none;
+}
+
+.profile_review_wrapper h4{
+	font-size: 1.3em;
+	margin: 0;
+	margin-bottom: 8px;
+}
+
+.profile_review_wrapper h4 a{
+	color: #0d3752;
+}
+
+.profile_review_wrapper p{
+	margin: 0;
+}
+
+.profile_review_wrapper .caption{
+	color: #ccc;
+	font-size: 0.8em;
+	font-style: italic;
+}
+
+.profile_review_wrapper .p_content{
+	margin: 8px 0px;
+	color: #0d3752;
+}
+
+.review_area_img{
+	border-radius: 5px;
+}
+
 
 

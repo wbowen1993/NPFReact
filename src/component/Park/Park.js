@@ -132,20 +132,22 @@ class Park extends Component{
 	    	if(res.state == 1){
 	    		console.log(res.hasSession);
 	    		// console.log(res.allReviews);
-	    		// console.log(res.votes);
+	    		console.log(res.ratings);
 	    		//[TODO]mock ranking
 	    		let ranking = 1 + Math.floor(Math.random() * 59);
 		    	this.setState({info:res.info, alerts:res.alerts, hasSession: res.hasSession, ranking});
 		    	this.setState({weather: res.weather});
 		    	let latLon = [utils.parseLatLon(this.state.info.latLong).lat, utils.parseLatLon(this.state.info.latLong).lon];				
-		    	this.setState({latLon, 
+		    	this.setState({
+		    		latLon, 
 		    		campsites: res.campsites, 
 		    		watched: res.watched, 
 		    		all_reviews: res.allReviews, 
 		    		user_review: res.review, 
 		    		votes: res.votes,
-		    		ratings: {avg: 4.5, count: 10, distribution:[60, 30, 0, 10, 0]},
-		    		editing_review: res.review});
+		    		ratings: res.ratings,
+		    		editing_review: res.review
+		    	});
 		    }
 	    })
 	    .catch((err) => {

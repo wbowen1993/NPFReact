@@ -6,6 +6,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
+import classnames from 'classnames';
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -14,7 +15,14 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import GridList from '@material-ui/core/GridList';
+import GridListTile from '@material-ui/core/GridListTile';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
+import Rating from 'react-rating';
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css'; 
 
 import utils from "../../utils/utils";
 
@@ -24,28 +32,50 @@ import photo_icon from './photo.svg';
 import review_icon from './review.svg';
 import plus from './plus.svg';
 import checked from '../Park/checked.svg';
+import full from '../Park/star_readonly.svg';
+import empty from '../Park/star_empty.svg';
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    padding: '40px 20px'
-  },
-  wrapper: {
-    maxWidth: 1200,
-    margin: 'auto',
-  },
-  editbox_content_wrapper: {
-  	padding: '20px'
-  }
+	root: {
+	    flexGrow: 1,
+	    padding: '40px 20px'
+	},
+	wrapper: {
+	    maxWidth: 1200,
+	    margin: 'auto',
+	},
+	editbox_content_wrapper: {
+	  	padding: '20px'
+	},
+	gridList:{
+		paddingBottom: 8,
+	},
+	star:{
+	  	width: 20,
+	  	height: 20
+	},
+  	vote:{
+		borderRadius: '1000px',
+		borderWidth: 2,
+		borderStyle: 'solid',
+		marginRight: 8
+	},
+	upvote:{
+		borderColor: '#00cc66',
+		color: '#00cc66 !important',
+	},
+	downvote:{
+		borderColor: '#ff6666',
+		color: '#ff6666 !important',
+	},
+	deleteBtn:{
+		color: 'white',
+		backgroundColor: '#ff8566'
+	}
 });
 
 const theme = createMuiTheme({
   breakpoints: {
-    // Define custom breakpoint values.
-    // These will apply to Material-UI components that use responsive
-    // breakpoints, such as `Grid` and `Hidden`. You can also use the
-    // theme breakpoint functions `up`, `down`, and `between` to create
-    // media queries for these breakpoints
     values: {
       xs: 0,
       sm: 600,
@@ -71,7 +101,12 @@ class Profile extends Component{
 	      redirect_path: '',
 	      error_msg: '',
 	      notif_window: 0,
-	      open: false
+	      open: false,
+	      reviews: [],
+	      photos: [],
+	      imageOpen: false,
+	      imgurl: "",
+	      server_error_msg: utils.SERVER_ERR_MSG
 	    };
 
 	    this.renderRedirect = this.renderRedirect.bind(this);
@@ -81,6 +116,8 @@ class Profile extends Component{
 	    this.submitHandler = this.submitHandler.bind(this);
 	    this.unwatchHandler = this.unwatchHandler.bind(this);
 	    this.handleClose = this.handleClose.bind(this);
+	    this.enlargeImg = this.enlargeImg.bind(this);
+	    this.deleteReview = this.deleteReview.bind(this);
 	}
 
 	componentDidMount(){
@@ -97,8 +134,14 @@ class Profile extends Component{
 			}
 			else if(res.state === 2){
 			  //3 for session issue
-			  // console.log(res.watchList);
-			  this.setState({redirect:false, user:res.info, username:res.info.username, watchList: res.watchList, username_input: res.info.username, imagePreviewUrl: res.info.profile_img});
+			  console.log(res.reviews);
+			  this.setState({redirect:false, 
+			  				user:res.info, 
+			  				username:res.info.username, 
+			  				watchList: res.watchList,
+			  				reviews: res.reviews,
+			  				username_input: res.info.username, 
+			  				imagePreviewUrl: res.info.profile_img});
 			}
 			this.setState({initial:false});
 		})
@@ -114,8 +157,12 @@ class Profile extends Component{
 			if(this.state.redirect_path == "/login")
 				return <Redirect to={{pathname:"/login"}} />
 			else
-				return <Redirect to={{pathname:this.state.redirect_path, msg: utils.SERVER_ERR_MSG, state: 0}} />  
+				return <Redirect to={{pathname:this.state.redirect_path, msg: this.state.server_error_msg, state: 0}} />  
 		}
+	}
+
+	enlargeImg(e){
+		this.setState({imageOpen: true, imgurl: e.target.src});
 	}
 
 	editBoxToggle = () => {
@@ -187,6 +234,32 @@ class Profile extends Component{
 		this.setState({ error_msg: ""});
 	};
 
+	deleteReview(reviewId){
+		console.log(reviewId);
+		fetch('/user/profile/review/' + reviewId, {
+				method:'DELETE',  
+			}).then((res) => {
+		    	return res.json();
+		    })
+		    .then((res) => {
+		    	if(res.state == -2){
+					this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
+		    	}
+		    	else if(res.state == -1){
+	            	this.setState({redirect: true, redirect_path: "/login"})
+		    	}
+		    	else if(res.state == 0){
+					this.setState({redirect: true, redirect_path: "/notification"});
+		    	}
+		    	else if(res.state == 1){
+	            	window.location.reload();
+		    	}
+		    })
+		    .catch((err) => {
+				this.setState({redirect: true, redirect_path: "/notification"});
+			});
+	}
+
 	unwatchHandler(e){
 		let code = e.target.id;
 		fetch('/parks/' + code + "/watch", {
@@ -224,6 +297,8 @@ class Profile extends Component{
 
 		const { classes } = this.props;
 
+		const review_imgs = utils.importAll(require.context('../../../public/img/review', false));
+
 		var avatar, preview_avatar;
 		var images;
 		var username;
@@ -259,54 +334,105 @@ class Profile extends Component{
 						<MuiThemeProvider theme={theme}>
 							<div className={classes.root}>
 								<div className={classes.wrapper}>
-							      <Grid container spacing={16}>
-							        <Grid item xs={12} md={4} lg={3}>
-							        	<div className="side_box">
-											<div className="box personal_info_box">
-												<h3>Personal Info</h3>
-												<div className="avatar_box">
-													<img src={avatar} className="avatar"></img>
-												</div>
-												<div className="row"><h4>{this.state.user.email}</h4></div>
-												<div className="row"><h4>{username}</h4></div>
-												<div className="edit_btn_container"><h4 onClick={this.editBoxToggle}>Edit Profile</h4></div>
-											</div>
-											<div className="box contribution_box">
-												<h3>Contribution</h3>
-												<div className="row"><img src={photo_icon}/><h4 className="contribution_num">{this.state.user.contribution_img}</h4></div>
-												<div className="row"><img src={review_icon}/><h4 className="contribution_num">{this.state.user.contribution_review}</h4></div>
-											</div>
-										</div>
-							        </Grid>
-							        <Grid item xs={12} md={8} lg={9}>
-							          <div className="box content_box">
-											<h3>Watch List</h3>
-											{
-												!this.state.watchList.length && 
-												<h2>Your watch list is empty</h2>
-											}
-											{
-												
-												this.state.watchList.map(function(park, i){
-													return <div key={i} className="watchlist_wrapper">
-														<p><Link to={"park/" + park.code}>{park.name}</Link></p>
-														{
-															<div className="states_board">{
-																park.states.split(",").map(function(state, ii){
-																	return <Link key={ii} to="/">{state}</Link>
-																})
-															}
-															</div>
-														}
-														<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
+							      	<Grid container spacing={16}>
+								        <Grid item xs={12} md={4} lg={3}>
+								        	<div className="side_box">
+												<div className="box personal_info_box">
+													<h3>Personal Info</h3>
+													<div className="avatar_box">
+														<img src={avatar} className="avatar"></img>
 													</div>
-												}, this)
+													<div className="row"><h4>{this.state.user.email}</h4></div>
+													<div className="row"><h4>{username}</h4></div>
+													<div className="edit_btn_container"><h4 onClick={this.editBoxToggle}>Edit Profile</h4></div>
+												</div>
+												<div className="box contribution_box">
+													<h3>Contribution</h3>
+													<div className="row"><img src={photo_icon}/><h4 className="contribution_num">{this.state.user.contribution_img}</h4></div>
+													<div className="row"><img src={review_icon}/><h4 className="contribution_num">{this.state.user.contribution_review}</h4></div>
+												</div>
+											</div>
+								        </Grid>
+								        <Grid item xs={12} md={8} lg={9}>
+								          	<div className="box content_box">
+												<h3>Watch List</h3>
+												{
+													!this.state.watchList.length && 
+													<h2>Your watch list is empty</h2>
+												}
+												{
+													
+													this.state.watchList.map(function(park, i){
+														return <div key={i} className="watchlist_wrapper">
+															<p><Link to={"park/" + park.code}>{park.name}</Link></p>
+															{
+																<div className="states_board">{
+																	park.states.split(",").map(function(state, ii){
+																		return <Link key={ii} to="/">{state}</Link>
+																	})
+																}
+																</div>
+															}
+															<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
+														</div>
+													}, this)
+												}
+											</div>
+											{
+												this.state.reviews.length > 0 && 
+												<div className="box content_box">
+												<h3>Your Reviews</h3>
+												{
+													this.state.reviews.map((review, i) => {
+														return <div key={i} className="profile_review_wrapper">
+															<Grid container justify="space-between" alignItems="center">
+																<Grid item>
+																	<h4><Link to={"park/" + review.parkCode}>{review.parkName}</Link></h4>
+																</Grid>
+																<Grid item>
+																	<Button className={classes.deleteBtn} id={"d_" + review._id} onClick={() => this.deleteReview(review._id)}>DELETE</Button>
+																</Grid>
+															</Grid>
+															<Grid container spacing={16} alignItems="center">
+														  		<Grid item>
+															  		<Rating 
+															      		initialRating={review.rating}
+															      		emptySymbol={<img src={empty} className={classes.star} />}
+															      		fullSymbol={<img src={full} className={classes.star} />}
+															      		readonly
+															  		/>
+														  		</Grid>
+														  		<Grid item>
+															  		<p className="caption">
+														            	{utils.calcPostTime(review.post_time)}
+															        </p>
+														        </Grid>
+													        </Grid>
+													        <p className="p_content">{review.content}</p>
+													        <GridList cellHeight={100} className={classes.gridList} cols={4}>
+														        {review.related_images.map((e, i) => (
+														          <GridListTile key={i} cols={1}>
+														            <img src={review_imgs[e]} alt={"images-" + i} className="review_area_img" onClick={this.enlargeImg}/>
+														          </GridListTile>
+														        ))}
+												      		</GridList>
+												      		<Button disabled className={classnames(classes.vote, classes.upvote)}>
+												        		Useful&ensp;
+												        		<p className="vote_bubble vote_bubble_default_upvote">{review.upvotes}</p>
+											        		</Button>
+												        	<Button disabled className={classnames(classes.vote, classes.downvote)}>
+												        		Inappropriate&ensp;
+											        			<p className="vote_bubble vote_bubble_default_downvote">{review.downvotes}</p>
+											        		</Button>
+														</div>
+													})
+												}
+												</div>
 											}
-										</div>
-							        </Grid>
-							      </Grid>
-							    </div>
-						    </div>
+								      	</Grid>
+							      	</Grid>
+						   		</div>
+					   		</div>
 						    <Dialog
 					        	open={this.state.open}
 					        	onClose={this.handleClose}
@@ -348,6 +474,12 @@ class Profile extends Component{
 						</MuiThemeProvider>
 					</div>
 				}
+				{this.state.imageOpen && (
+		        	<Lightbox
+		            mainSrc={this.state.imgurl}
+		            onCloseRequest={() => this.setState({ imageOpen: false })}
+		          />
+		        )}
 			</div>
 		)
 	}
