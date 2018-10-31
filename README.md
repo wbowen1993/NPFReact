@@ -5,6 +5,15 @@ React part of the National Park Finder
 ======================================
 
 [TODO]
+===General
+[1]. Password reset page
+
+[2]. Feedback module 
+
+[3]. Feature page ...... tons of work
+
+[4]. Seach page, mainly on state first
+
 ===Review Related
 
 [x]. Review box
@@ -14,3 +23,9 @@ React part of the National Park Finder
 [x]. rating area for park(overall rating and user rating if rated)
 
 [4]. hot review to be post on the top
+
+===Image Related
+
+[1]. Image/Review toggle in profile page
+
+[2]. Image list view with delete button enable

@@ -21,7 +21,6 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import CloseIcon from '@material-ui/icons/Close';
@@ -94,7 +93,7 @@ class Park extends Component{
 		this.state = {
 			initial: true,
 			hasSession: false,
-			watched: false,
+			subscribed: false,
 			redirect: false,
 			menu:0,
 			notif_window: 0,
@@ -110,7 +109,7 @@ class Park extends Component{
 			snackBarOpen: false
 		};
 
-		this.addToWatch = this.addToWatch.bind(this);
+		this.addToSubscribe = this.addToSubscribe.bind(this);
 		this.selectMenu = this.selectMenu.bind(this);
 		this.reviewPop = this.reviewPop.bind(this);
 		this.postReview = this.postReview.bind(this);
@@ -131,7 +130,7 @@ class Park extends Component{
 	    .then((res) => {
 	    	if(res.state == 1){
 	    		console.log(res.hasSession);
-	    		// console.log(res.allReviews);
+	    		console.log(res.allReviews);
 	    		console.log(res.ratings);
 	    		//[TODO]mock ranking
 	    		let ranking = 1 + Math.floor(Math.random() * 59);
@@ -141,7 +140,7 @@ class Park extends Component{
 		    	this.setState({
 		    		latLon, 
 		    		campsites: res.campsites, 
-		    		watched: res.watched, 
+		    		subscribed: res.subscribed, 
 		    		all_reviews: res.allReviews, 
 		    		user_review: res.review, 
 		    		votes: res.votes,
@@ -190,7 +189,7 @@ class Park extends Component{
 		</div>
 	}
 
-	addToWatch = () => {
+	addToSubscribe = () => {
 		if(!this.state.hasSession){
 			if(!this.state.snackBarOpen){
 				this.setState({snackBarOpen: true});
@@ -200,7 +199,7 @@ class Park extends Component{
 			this.setState({snackBarOpen: false});
 			const path = this.props.location.pathname;
 			const code = path.substring(path.lastIndexOf("/") + 1);
-			fetch('/parks/' + code + "/watch", {
+			fetch('/parks/' + code + "/subscribe", {
 				method:'POST',
 				headers:{'Content-Type': 'application/json'},  
 			})
@@ -209,7 +208,7 @@ class Park extends Component{
 			})
 			.then((res) => {
 				if(res.state === 1){
-					this.setState({watched: true});
+					this.setState({subscribed: true});
 					const temp = this.state.notif_window;
 					if(temp == 0)
 						this.setState({notif_window: 1});
@@ -219,7 +218,7 @@ class Park extends Component{
 						this.setState({notif_window: 1});
 				}
 				else if(res.state === 2){
-					this.setState({watched: false});
+					this.setState({subscribed: false});
 					const temp = this.state.notif_window;
 					if(temp == 0)
 						this.setState({notif_window: 1});
@@ -491,22 +490,22 @@ class Park extends Component{
 
 		let all_photos = [];
 
-		let banner_style, watched;
-		let watched_btn_content, review_btn_content, notif_content;
+		let banner_style, subscribed;
+		let subscribed_btn_content, review_btn_content, notif_content;
 		if(!this.state.initial){
 			let arr = [this.state.info];
 			let mapping = utils.match(arr, images);
 			banner_style = {backgroundImage:"url(" + encodeURI(mapping[this.state.info.name]) + ")"};
 
-			if(this.state.hasSession && this.state.watched){
-				watched = {background: "#ec5f5f", color: "white"};
-				watched_btn_content = "WATCHED";
-				notif_content = "Watched successfully";
+			if(this.state.hasSession && this.state.subscribed){
+				subscribed = {background: "#ec5f5f", color: "white"};
+				subscribed_btn_content = "UNSUBSCRIBE";
+				notif_content = "subscribed successfully";
 			}
 			else{
-				watched = {background: "white", color: "#ec5f5f"};
-				watched_btn_content = "ADD TO WATCH";
-				notif_content = "Unwatched successfully";
+				subscribed = {background: "white", color: "#ec5f5f"};
+				subscribed_btn_content = "SUBSCRIBE";
+				notif_content = "Unsubscribed successfully";
 			}
 
 			if(this.state.hasSession && this.state.user_review.rating){
@@ -518,7 +517,7 @@ class Park extends Component{
 
 			this.state.all_reviews.forEach((review) => {
 				review.related_images.forEach((photo) => {
-					all_photos.push({photo: review_photos[photo], 
+					all_photos.push({photo: review_photos[photo.name], 
 									avatar: avatars[review.userId.profile_img], 
 									username: review.userId.username});
 				});
@@ -590,8 +589,8 @@ class Park extends Component{
 												<Grid item xs={12} sm={3} md={12}>
 													<div className={classes.section}>
 														<div className="park_user_area">
-															<button className="park_fav_btn" onClick={this.addToWatch} style={watched}>
-															{watched_btn_content}
+															<button className="park_fav_btn" onClick={this.addToSubscribe} style={subscribed}>
+															{subscribed_btn_content}
 															</button>
 															<button className="park_review_btn" onClick={this.reviewPop}>
 															{review_btn_content}

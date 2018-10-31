@@ -82,7 +82,7 @@
 	padding: 20px 0px;
 }
 
-.watchlist_wrapper{
+.subscribelist_wrapper{
 	padding: 10px 20px;
 	border-bottom: 1px solid #ccc;
 	display: flex;
@@ -90,11 +90,11 @@
 	/*font-size: 1em;*/
 }
 
-.watchlist_wrapper *{
+.subscribelist_wrapper *{
 	font-size: 1em;
 }
 
-.watchlist_wrapper p{
+.subscribelist_wrapper p{
 	margin: 0;
 	flex-basis: 20%;
 	display: flex;
@@ -103,36 +103,36 @@
 	color: #0d3752;
 }
 
-.watchlist_wrapper p a{
+.subscribelist_wrapper p a{
 	color: #0d3752;
 }
 
-.watchlist_wrapper:last-child{
+.subscribelist_wrapper:last-child{
 	border: 0;
 }
 
-.watchlist_wrapper .states_board{
+.subscribelist_wrapper .states_board{
 	flex-basis: 20%;
 	text-align: center;
 
 	justify-content: left;
 }
 
-.watchlist_wrapper .states_board a{
+.subscribelist_wrapper .states_board a{
 	/*border-radius: 3px;*/
 	/*justify-content: left;*/
 	/*padding: 5px 1em;*/
 	margin-left: 5px;
 }
 
-.watch_btn{
+.subscribe_btn{
 	background: #ff8566;
 	border:0;
 	border-radius: 3px;
 	padding: 5px 20px;
 }
 
-.watch_btn:hover{
+.subscribe_btn:hover{
 	background: #ff471a;
 }
 

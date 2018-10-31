@@ -17,8 +17,14 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
+import FormControl from '@material-ui/core/FormControl';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import CloseIcon from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import Rating from 'react-rating';
 import Lightbox from 'react-image-lightbox';
@@ -71,19 +77,28 @@ const styles = theme => ({
 	deleteBtn:{
 		color: 'white',
 		backgroundColor: '#ff8566'
-	}
+	},
+	formControl:{
+		marginBottom: 8
+	},
+	snackbar:{
+		background: '#00cc66'
+	},
 });
 
 const theme = createMuiTheme({
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 900,
-      lg: 1200,
-      xl: 1600
-    }
-  }
+  	typography: {
+    	useNextVariants: true,
+  	},
+  	breakpoints: {
+    	values: {
+	      	xs: 0,
+	      	sm: 600,
+	      	md: 900,
+	      	lg: 1200,
+	      	xl: 1600
+    	}
+  	}
 });
 
 
@@ -94,30 +109,41 @@ class Profile extends Component{
 	      initial: true,
 	      redirect: false,
 	      user:'',
-	      username:'',
 	      username_input: '',
+	      email_input: '',
+	      reenter_email_input: '',
 	      uploadFile: null,
 	      imagePreviewUrl: null,
 	      redirect_path: '',
 	      error_msg: '',
 	      notif_window: 0,
-	      open: false,
+	      infoDialogOpen: false,
 	      reviews: [],
 	      photos: [],
 	      imageOpen: false,
+	      emailChangeOpen: false,
+	      snackBarOpen: false,
+	      snackbarMsg: '',
+	      invalidEmail: true,
+	      invalidReenterEmail: false,
 	      imgurl: "",
 	      server_error_msg: utils.SERVER_ERR_MSG
 	    };
 
 	    this.renderRedirect = this.renderRedirect.bind(this);
 	    this.editBoxToggle = this.editBoxToggle.bind(this);
-	    this.onChangeHandler = this.onChangeHandler.bind(this);
+	    this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
 	    this.fileChangeHandler = this.fileChangeHandler.bind(this);
-	    this.submitHandler = this.submitHandler.bind(this);
-	    this.unwatchHandler = this.unwatchHandler.bind(this);
-	    this.handleClose = this.handleClose.bind(this);
+	    this.submitInfoHandler = this.submitInfoHandler.bind(this);
+	    this.unsubscribeHandler = this.unsubscribeHandler.bind(this);
+	    this.infoDialogClose = this.infoDialogClose.bind(this);
 	    this.enlargeImg = this.enlargeImg.bind(this);
 	    this.deleteReview = this.deleteReview.bind(this);
+	    this.emailChangeHandler = this.emailChangeHandler.bind(this);
+	    this.submitEmailChangeHandler = this.submitEmailChangeHandler.bind(this);
+	    this.emailChangeBoxOpen = this.emailChangeBoxOpen.bind(this);
+	    this.resendVerification = this.resendVerification.bind(this);
+	    this.snackBarClose = this.snackBarClose.bind(this);
 	}
 
 	componentDidMount(){
@@ -137,10 +163,9 @@ class Profile extends Component{
 			  console.log(res.reviews);
 			  this.setState({redirect:false, 
 			  				user:res.info, 
-			  				username:res.info.username, 
-			  				watchList: res.watchList,
+			  				subscribeList: res.subscribeList,
 			  				reviews: res.reviews,
-			  				username_input: res.info.username, 
+			  				username_input: res.info.username,
 			  				imagePreviewUrl: res.info.profile_img});
 			}
 			this.setState({initial:false});
@@ -166,10 +191,16 @@ class Profile extends Component{
 	}
 
 	editBoxToggle = () => {
-		this.setState({open: true});
+		this.setState({infoDialogOpen: true});
 	}
 
-	onChangeHandler(e){
+	infoDialogClose = () => {
+	    this.setState({ infoDialogOpen: false});
+	    this.setState({ username_input: this.state.user.username, imagePreviewUrl: this.state.user.profile_img});
+		this.setState({ error_msg: ""});
+	}
+
+	usernameChangeHandler(e){
 		this.setState({[e.target.name]:e.target.value});
 	}
 
@@ -189,7 +220,7 @@ class Profile extends Component{
 		    reader.readAsDataURL(file)
 	}
 
-	submitHandler(e){
+	submitInfoHandler(e){
         e.preventDefault();
 
 		const formData = new FormData();
@@ -228,11 +259,96 @@ class Profile extends Component{
     	});
 	}
 
-	handleClose = () => {
-	    this.setState({ open: false});
-	    this.setState({ username_input: this.state.username, imagePreviewUrl: this.state.user.profile_img});
-		this.setState({ error_msg: ""});
-	};
+	emailChangeBoxOpen = () => {
+		this.setState({ emailChangeOpen: true});
+	}
+
+	emailChangeClose = () => {
+		this.setState({ emailChangeOpen: false});
+		this.setState({ email_input: '', reenter_email_input: ''});
+	}
+
+	emailChangeHandler = (e) => {
+		this.setState({[e.target.id]: e.target.value}, () => {
+			let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		    // if(e.target.id == "email_input"){
+			    if(re.test(String(this.state.email_input).toLowerCase())){
+			        this.setState({invalidEmail: false});
+				}
+				else{
+					this.setState({invalidEmail: true});
+				}
+			// }
+			
+			if(this.state.reenter_email_input == this.state.email_input){
+				this.setState({invalidReenterEmail: false});
+			}
+			else{
+				this.setState({invalidReenterEmail: true});
+			}
+		});
+	}
+
+	submitEmailChangeHandler = (e) => {
+		e.preventDefault();
+
+		if(!this.state.invalidEmail && !this.state.invalidReenterEmail){
+			fetch("/user/change_email", {
+				method:'POST',
+		        headers:{'Content-Type': 'application/json'},  
+		        body:JSON.stringify({
+		          "email":this.state.email_input
+		        })
+		    }).then(res => {
+	        	return res.json();
+	      	}).then(res => {
+		    	if(res.state == -1){
+					this.setState({redirect: true, redirect_path: "/login"});
+		    	}
+		    	else if(res.state == 0){
+		    		this.setState({redirect: true, redirect_path: "/notification"});
+		    	}
+		    	else if(res.state == 1){
+		    		this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
+		    	}
+		    	else if(res.state == 2){
+	            	window.location.reload();
+		    	}
+		    }).catch(err => {
+	    		this.setState({redirect: true, redirect_path: "/notification"});
+		    });
+		}
+	}
+
+	resendVerification = () => {
+		fetch('/user/email_verify',{
+			method: 'POST',
+			headers:{'Content-Type': 'application/json'},  
+	        body:JSON.stringify({
+	          "email":this.state.user.email
+	        })
+		})
+		.then(res => {
+	    	return res.json();
+	    })
+	    .then(res => {
+	    	if(res.state == -1){
+	    		this.setState({redirect: true, redirect_path: "/login"});
+	    	}
+	    	else if(res.state == 0){
+	    		this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
+	    	}
+	    	else if(res.state == 1){
+	    		this.setState({snackBarOpen: true, snackbarMsg: res.msg});
+	    	}
+	    }).catch(err => {
+			this.setState({redirect: true, redirect_path: "/notification"});
+	    });
+	}
+
+	snackBarClose = () => {
+		this.setState({ snackBarOpen: false });
+	}
 
 	deleteReview(reviewId){
 		console.log(reviewId);
@@ -246,7 +362,7 @@ class Profile extends Component{
 					this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
 		    	}
 		    	else if(res.state == -1){
-	            	this.setState({redirect: true, redirect_path: "/login"})
+	            	this.setState({redirect: true, redirect_path: "/login"});
 		    	}
 		    	else if(res.state == 0){
 					this.setState({redirect: true, redirect_path: "/notification"});
@@ -260,9 +376,9 @@ class Profile extends Component{
 			});
 	}
 
-	unwatchHandler(e){
+	unsubscribeHandler(e){
 		let code = e.target.id;
-		fetch('/parks/' + code + "/watch", {
+		fetch('/parks/' + code + "/subscribe", {
 				method:'POST',
 				headers:{'Content-Type': 'application/json'},  
 			})
@@ -271,7 +387,7 @@ class Profile extends Component{
 			})
 			.then((res) => {
 				if(res.state === 2){
-					this.setState({watchList: utils.findAndDelete(this.state.watchList, code)});
+					this.setState({subscribeList: utils.findAndDelete(this.state.subscribeList, code)});
 					const temp = this.state.notif_window;
 					if(temp == 0)
 						this.setState({notif_window: 1});
@@ -329,11 +445,16 @@ class Profile extends Component{
 				{!this.state.initial && !this.state.redirect &&
 					<div className="profile_page_wrapper">
 						<div className={this.state.notif_window == 0 ? "notif_window notif_window0" : (this.state.notif_window == 1 ? "notif_window notif_window1" : "notif_window notif_window2")}>
-							<img src={checked} className="notif_checked"/>Unwatch successfully
+							<img src={checked} className="notif_checked"/>Unsubscribe successfully
 						</div>
 						<MuiThemeProvider theme={theme}>
 							<div className={classes.root}>
 								<div className={classes.wrapper}>
+									{this.state.user.verified == false && 
+										<div className="verify_notif">
+											Please verify the account by clicking the link sent to your email, if you don't receive the email please request to <p onClick={this.resendVerification}>resend</p> it, or if you want to change the email, please click <p onClick={this.emailChangeBoxOpen}>here</p> 
+										</div>
+									}
 							      	<Grid container spacing={16}>
 								        <Grid item xs={12} md={4} lg={3}>
 								        	<div className="side_box">
@@ -355,15 +476,15 @@ class Profile extends Component{
 								        </Grid>
 								        <Grid item xs={12} md={8} lg={9}>
 								          	<div className="box content_box">
-												<h3>Watch List</h3>
+												<h3>Subscribe List</h3>
 												{
-													!this.state.watchList.length && 
-													<h2>Your watch list is empty</h2>
+													!this.state.subscribeList.length && 
+													<h2>Your subscription list is empty</h2>
 												}
 												{
 													
-													this.state.watchList.map(function(park, i){
-														return <div key={i} className="watchlist_wrapper">
+													this.state.subscribeList.map(function(park, i){
+														return <div key={i} className="subscribelist_wrapper">
 															<p><Link to={"park/" + park.code}>{park.name}</Link></p>
 															{
 																<div className="states_board">{
@@ -373,7 +494,7 @@ class Profile extends Component{
 																}
 																</div>
 															}
-															<button className="btn watch_btn" id={park.code} onClick={this.unwatchHandler}>Unwatch</button>
+															<button className="btn subscribe_btn" id={park.code} onClick={this.unsubscribeHandler}>Unsubscribe</button>
 														</div>
 													}, this)
 												}
@@ -412,7 +533,7 @@ class Profile extends Component{
 													        <GridList cellHeight={100} className={classes.gridList} cols={4}>
 														        {review.related_images.map((e, i) => (
 														          <GridListTile key={i} cols={1}>
-														            <img src={review_imgs[e]} alt={"images-" + i} className="review_area_img" onClick={this.enlargeImg}/>
+														            <img src={review_imgs[e.name]} alt={"images-" + i} className="review_area_img" onClick={this.enlargeImg}/>
 														          </GridListTile>
 														        ))}
 												      		</GridList>
@@ -434,8 +555,8 @@ class Profile extends Component{
 						   		</div>
 					   		</div>
 						    <Dialog
-					        	open={this.state.open}
-					        	onClose={this.handleClose}
+					        	open={this.state.infoDialogOpen}
+					        	onClose={this.infoDialogClose}
 					        	aria-labelledby="form-dialog-title"
 					        	className={classes.editbox_wrapper}
 					        	fullWidth={true}
@@ -458,7 +579,7 @@ class Profile extends Component{
 									          id="standard-name"
 									          label="Username"
 									          value={this.state.username_input}
-									          onChange={this.onChangeHandler}
+									          onChange={this.usernameChangeHandler}
 									          margin="normal"
 									          fullWidth
 									          variant="outlined"
@@ -467,10 +588,65 @@ class Profile extends Component{
 						        	</Grid>
 					          	</DialogContent>
 					        	<DialogActions>
-					        		<Button onClick={this.handleClose} color="primary">Cancel</Button>
-					            	<Button onClick={this.submitHandler} color="primary">Confirm</Button>
+					        		<Button onClick={this.infoDialogClose} color="primary">Cancel</Button>
+					            	<Button onClick={this.submitInfoHandler} color="primary">Confirm</Button>
 					        	</DialogActions>
 					        </Dialog>
+					        <Dialog
+					        	open={this.state.emailChangeOpen}
+					        	onClose={this.emailChangeClose}
+					        	aria-labelledby="form-dialog-title"
+					        	className={classes.editbox_wrapper}
+					        	fullWidth={true}
+					        >
+					        	<DialogTitle id="form-dialog-title" className="editbox_title">Email address change</DialogTitle>
+					        	<DialogContent className={classes.editbox_content_wrapper}>
+						        	<FormControl className={classes.formControl} fullWidth aria-describedby="component-error-text">
+								        <InputLabel htmlFor="component-error">Email</InputLabel>
+								        <Input id="email_input" value={this.state.email_input} onChange={this.emailChangeHandler} />
+								        {
+								        	this.state.invalidEmail && <FormHelperText error id="component-error-text">Invalid email address</FormHelperText>
+								        }
+							        </FormControl>
+							        <FormControl className={classes.formControl} fullWidth aria-describedby="component-error-text">
+								        <InputLabel htmlFor="component-error">Reenter email</InputLabel>
+								        <Input id="reenter_email_input" value={this.state.reenter_email_input} onChange={this.emailChangeHandler} />
+								        {
+								        	this.state.invalidReenterEmail && <FormHelperText error id="component-error-text">Different email address</FormHelperText>
+								        }
+							        </FormControl>
+					        	</DialogContent>
+					        	<DialogActions>
+					        		<Button onClick={this.emailChangeClose} color="primary">Cancel</Button>
+					            	<Button onClick={this.submitEmailChangeHandler} color="primary">Confirm</Button>
+					        	</DialogActions>
+					        </Dialog>
+					        <Snackbar
+								anchorOrigin={{
+									vertical: 'top',
+									horizontal: 'center',
+								}}
+								open={this.state.snackBarOpen}
+								autoHideDuration={5000}
+								onClose={this.snackBarClose}
+					        >
+					        <SnackbarContent
+					        	message={<span id="message-id">{this.state.snackbarMsg}</span>}
+					          	action={[
+						            <IconButton
+						            	key="close"
+						              	aria-label="Close"
+						              	color="inherit"
+						              	className={classes.close}
+						              	onClick={this.snackBarClose}
+						            >
+						              	<CloseIcon />
+						            </IconButton>,
+					          	]}
+					          	className={classes.snackbar}
+					          	>
+					        </SnackbarContent>
+					        </Snackbar>
 						</MuiThemeProvider>
 					</div>
 				}

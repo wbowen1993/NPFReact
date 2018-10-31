@@ -150,3 +150,11 @@ p.warning:empty{
 .drop-appear.drop-appear-active {
   transition: all 1.0s ease;
 }
+
+.reset_warning{
+	font-size: 0.8em;
+	border-radius: 5px;
+	border: 1px solid #ff4d4d;
+	color: #ff4d4d;
+	text-align: center;
+}

@@ -165,7 +165,7 @@ class ReviewCard extends Component{
 				        <GridList cellHeight={100} className={classes.gridList} cols={4}>
 					        {info.related_images.map((e, i) => (
 					          <GridListTile key={i} cols={1}>
-					            <img src={review_imgs[e]} alt={"images-" + i} className="review_area_img" onClick={this.enlargeImg}/>
+					            <img src={review_imgs[e.name]} alt={"images-" + i} className="review_area_img" onClick={this.enlargeImg}/>
 					          </GridListTile>
 					        ))}
 			      		</GridList>
