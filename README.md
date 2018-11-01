@@ -6,7 +6,7 @@ React part of the National Park Finder
 
 [TODO]
 ===General
-[1]. Password reset page
+[x]. Password reset page
 
 [2]. Feedback module 
 
