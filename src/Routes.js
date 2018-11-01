@@ -25,6 +25,7 @@ class Routes extends Component {
 					<Route path="/notification" component={Notification} exact />
 					<Route path="/profile" component={Profile} exact />
 					<Route path="/park/:parkCode" component={Park} />
+					<Route path="/reset" component={User} />
 				</Switch>
 			</div>
 		</BrowserRouter>

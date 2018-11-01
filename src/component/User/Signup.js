@@ -47,7 +47,7 @@ export default class Signup extends Component{
     return (
       <div className="login-wrapper">
         <h2 className="formHeader">Sign Up</h2>
-        <form onSubmit={this.handleSubmit}>
+        <form>
             <p className="warning">{this.props.error.server_err ? this.props.error.server_err : ""}</p>
             <div className = 'input_div user'>
               <img className = 'input_icon' src = {user_img} alt='user'/>

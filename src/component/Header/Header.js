@@ -120,7 +120,7 @@ class Header extends Component{
 		const images = utils.importAll(require.context('../../../public/img/avatar', false));
 
 		const HomeLink = props => <Link to="/" {...props} />
-		const LoginLink = props => <Link to="/login" {...props} />
+		const LoginLink = props => <Link to="/login" {...props} onClick={this.forceUpdate}/>
 		const ProfileLink = props => <Link to="/profile" {...props} />
 		const LogoutLink = props => <Link to="/logout" {...props} />
 		
