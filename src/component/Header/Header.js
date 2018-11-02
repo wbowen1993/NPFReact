@@ -57,15 +57,13 @@ class Header extends Component{
 	};
 
 	componentDidMount(){
-		// this.checkSession();
+		this.checkSession();
 		this.setState({initial: false});
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		console.log(this.state == prevState)
-		console.log(this.props = prevProps)
 		// if(this.state.hasSession != prevState.hasSession)
-			// this.checkSession();
+		this.checkSession();
 	}
 
 	checkSession = () => {
