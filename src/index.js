@@ -6,6 +6,10 @@ import * as serviceWorker from './serviceWorker';
 // import App from './App';
 import Routes from './Routes'
 
+if (module.hot) {
+    module.hot.accept();
+}
+
 ReactDOM.render(
 	<Routes/>,
 	document.getElementById('root'));

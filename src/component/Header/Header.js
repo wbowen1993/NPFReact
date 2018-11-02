@@ -15,6 +15,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Button from '@material-ui/core/Button';
 
+const images = utils.importAll(require.context('../../../public/img/avatar', false));
+
 const styles = {
   root: {
     flexGrow: 1,
@@ -55,12 +57,15 @@ class Header extends Component{
 	};
 
 	componentDidMount(){
-		this.checkSession();
+		// this.checkSession();
 		this.setState({initial: false});
 	}
 
 	componentDidUpdate(prevProps, prevState, snapshot) {
-		// this.checkSession();
+		console.log(this.state == prevState)
+		console.log(this.props = prevProps)
+		// if(this.state.hasSession != prevState.hasSession)
+			// this.checkSession();
 	}
 
 	checkSession = () => {
@@ -116,8 +121,6 @@ class Header extends Component{
 		const { classes } = this.props;
 	    const { hasSession, anchorEl } = this.state;
 	    const open = Boolean(anchorEl);
-
-		const images = utils.importAll(require.context('../../../public/img/avatar', false));
 
 		const HomeLink = props => <Link to="/" {...props} />
 		const LoginLink = props => <Link to="/login" {...props} onClick={this.forceUpdate}/>

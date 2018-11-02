@@ -351,28 +351,30 @@ class Profile extends Component{
 	}
 
 	deleteReview(reviewId){
-		console.log(reviewId);
 		fetch('/user/profile/review/' + reviewId, {
 				method:'DELETE',  
 			}).then((res) => {
 		    	return res.json();
 		    })
 		    .then((res) => {
-		    	if(res.state == -2){
-					this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
-		    	}
-		    	else if(res.state == -1){
-	            	this.setState({redirect: true, redirect_path: "/login"});
-		    	}
-		    	else if(res.state == 0){
-					this.setState({redirect: true, redirect_path: "/notification"});
-		    	}
-		    	else if(res.state == 1){
-	            	window.location.reload();
-		    	}
+		    	console.log(res);
+		    	// console.log(res.state);
+		   //  	if(res.state == -2){
+					// this.setState({redirect: true, redirect_path: "/notification", server_error_msg: res.msg});
+		   //  	}
+		   //  	else if(res.state == -1){
+	    //         	this.setState({redirect: true, redirect_path: "/login"});
+		   //  	}
+		   //  	else if(res.state == 0){
+					// this.setState({redirect: true, redirect_path: "/notification"});
+		   //  	}
+		   //  	else if(res.state == 1){
+	    //         	// window.location.reload();
+	    //         	// this.setState({redirect: false, user: res.user, reviews: res.review});
+		   //  	}
 		    })
 		    .catch((err) => {
-				this.setState({redirect: true, redirect_path: "/notification"});
+				// this.setState({redirect: true, redirect_path: "/notification"});
 			});
 	}
 
